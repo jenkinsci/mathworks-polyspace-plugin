@@ -1,0 +1,69 @@
+<h2> Polyspace installation folder</h2>
+
+<p>
+  Choose the Polyspace installation folder to be used in this project,
+  as defined on the <a href="/configure">Configure System</a> page.
+</p>
+
+<p>
+  You can then use Polyspace commands such as <code>polyspace-configure</code>, <code>polyspace-bug-finder-server</code> and <code>polyspace-code-prover-server</code> 
+  directly in scripts without specifying the installation folder.
+</p>
+
+<p>
+  You can also use the helper utility <code>ps_helper</code> in scripts in the <strong>Build</strong> section of this project to filter results, report a pass/fail status and obtain other project information. For instance, in a Shell script, use the utility with the syntax <code>$ps_helper</code>. In a Windows batch file, use the syntax <code>%ps_helper%</code>. In the syntax descriptions below, <code><em>report</em></code> refers to the results file obtained using the command <code>polyspace-access -export</code> or <code>polyspace-report-generator -generate-results-list-file</code>.
+</p>
+
+<ul>
+  <li>
+    <pre>$ps_helper -report-filter <em>report</em> <em>filtered_report</em> [<em>owner</em>] [<em>title1</em> <em>value1</em>] [<em>title2</em> <em>value2</em>] ...</pre>
+    <p>Filters <code><em>report</em></code> for results with <code><em>title1</em></code> set to <code><em>value1</em></code>, etc. and saves to <code><em>filtered_report</em></code> (with name suffix <code>_<em>owner</em></code>). The name <em>owner</em> is added to a list of owners for personalized e-mail notification later.</p>
+    <p>For instance:</p>
+    <pre>$ps_helper -report-filter Results_List.tsv Results_Users.tsv userA Group Programming Function "get()"</pre>
+    <ol>
+        <li>Filters the file <code>Results_List.tsv</code> for results with <code>Group</code> set to <code>Programming</code> and <code>Function</code> set to <code>get()</code>.</li>
+        <li>Stores the filtered report in the file <code>Results_Users_userA.tsv</code>. You can later use the base name <code>Results_Users</code> to e-mail filtered reports to multiple users as a post-build action. For instance, you can send file <code>Results_Users_userA.tsv</code> to <code>userA@emailExtension.com</code>, file <code>Results_Users_userB.tsv</code> to <code>userB@emailExtension.com</code>, etc.</li>
+    </ol>
+  </li>
+
+  <li>
+    <pre>$ps_helper -report-count-findings <em>report</em></pre>
+    <p>Stores the number of findings in <code><em>report</em></code> (original or filtered).</p>
+    <p>For instance:</p>
+    <pre>NB_FINDINGS_USERA=$($ps_helper -report-count-findings Results_Users_userA.tsv)</pre>
+    <p>Returns the number of findings in <code>Results_Users_userA.tsv</code> to the variable <code>NB_FINDINGS_USERA</code>.</p>
+  </li>
+
+  <li>
+    <pre>$ps_helper -report-status <em>report</em>  <em>max</em></pre>
+    <p>Prints an analysis status based on number of findings in <code><em>report</em></code>. If the number is greater than <code><em>max</em></code>, the build status is <code>UNSTABLE</code>.
+        Otherwise, the status is <code>SUCCESS</code>.</p>
+    <p>For instance:</p>
+    <pre>BUILD_STATUS=$($ps_helper -report-status Results_All.tsv 10)</pre>
+    <p>Returns <code>UNSTABLE</code> to <code>BUILD_STATUS</code> if the number of findings in <code>Results_All.tsv</code> is greater than 10.</p>
+  </li>
+
+  <li>
+    <pre>$ps_helper -print-runid <em>upload_out</em></pre>
+    <pre>$ps_helper -print-projectid <em>upload_out</em></pre>
+    <pre>$ps_helper -print-projecturl <em>upload_out</em></pre>
+    <p>Obtains a project id, run id and project URL in Polyspace Access for the current upload. The file <code><em>upload_out</em></code> is obtained when uploading a result with the command:
+    <pre>polyspace-access -o <em>upload_out</em> -upload ...</pre>
+    <p>For instance:</p>
+    <ul>
+      <li>
+      <pre>PROJECT_ID=$($ps_helper -print-projectid <em>upload_out</em>)</pre>
+      <p>Returns the ID of the project for the current upload to <code>PROJECT_ID</code>.</p>
+      </li>
+      <li>
+      <pre>PROJECT_URL=$($ps_helper -print-projecturl <em>upload_out</em> $POLYSPACE_ACCESS_URL)</pre>
+      <p>Returns the URL of the project for the current upload to <code>PROJECT_URL</code>. The variable <code>$POLYSPACE_ACCESS_URL</code> represents the URL of the Polyspace Access interface (created from specified server settings).</p>
+      </li>
+    </ul>
+  </li>
+
+</ul>
+
+<p>
+  You can use the helper utility only when no Jenkins slave is used as the helper libraries are part of the Polyspace Jenkins plugin.
+</p>

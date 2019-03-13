@@ -1,0 +1,21 @@
+<h3>Send different e-mails to individual recipients</h3>
+
+<p>Send a different e-mail notification to each recipient with filtered results in attachment. For instance, if you use <code>$ps_helper -report-filter</code> in the <strong>Build</strong> section of this project to filter results for a file owner, you can send the filtered report to that file owner. Each time you use <code>$ps_helper -report-filter</code> with an owner name, the name is appended to a list of owners. You can send an individual e-mail to all owners in this list.</p>
+
+<p>Specify a base name for file attachments and files containing mail subject and mail body. The recipient name (or owner name) is appended to this base name to create a personalized e-mail for each recipient. The recipient name also determines the e-mail address where this personalized e-mail is sent.</p>
+
+<p>For instance, suppose you specify the following:</p>
+<ul>
+  <li><strong>Attachment file base name</strong>: report.tsv </li>
+  <li><strong>Mail subject file base name</strong>: subject.txt </li>
+  <li><strong>Mail body file base name</strong>: body.txt </li>
+</ul>
+<p>If the list of recipients contains the names <code>userA</code> and <code>userB</code>:</p>
+<ul>
+   <li>An e-mail is sent to <code>userA@emailExtension.com</code>. The email contains the file <code>report_userA.tsv</code> in attachment. The mail subject comes from <code>subject_userA.txt</code> and the mail body comes from <code>body_userA.txt</code>.</li>
+   <li>An e-mail is sent to <code>userB@emailExtension.com</code>. The email contains the file <code>report_userB.tsv</code> in attachment. The mail subject comes from <code>subject_userB.txt</code> and the mail body comes from <code>body_userB.txt</code>.</li>
+</ul>
+<p>The full e-mail address is determined from the server specified in the E-mail Notification section on the <a href="/configure">Configure System</a> page. You can create files for attachments and e-mail content through scripts in the <strong>Build</strong> section of this project. For instance, you can calculate the number of new findings for each owner and use the number in the mail subject for the owner.</p>
+
+<p>To test this personalized e-mail notification, enter an e-mail username (or e-mail address) in the field <strong>Unique recipients - Debug only</strong>. Instead of separate e-mail notifications to individual recipients, all e-mails are sent to this address. After checking the e-mail content in the notifications, clear this field for later builds.</p>
+

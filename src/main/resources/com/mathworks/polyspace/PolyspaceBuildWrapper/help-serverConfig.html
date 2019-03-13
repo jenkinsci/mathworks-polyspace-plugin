@@ -1,0 +1,23 @@
+<h2> Polyspace Access server</h2>
+
+<p>
+  Choose the Polyspace Access server to be used in this project,
+  as defined in the <a href="/configure">Configure System</a> page.
+</p>
+
+<p>
+  You can then use these variables in scripts in the <strong>Build</strong> section of this project. For instance, in a Shell script, use these variables with the syntax <code>$VAR</code>. In a Windows batch file, use the syntax <code>%VAR%</code>.
+</p>
+<ul>
+  <li><code>POLYSPACE_ACCESS_HOST</code> is the hostname of the Polyspace Access server.</li>
+  <li><code>POLYSPACE_ACCESS_PROTOCOL</code> is the protocol (http or https) of the Polyspace Access server.</li>
+  <li><code>POLYSPACE_ACCESS_PORT</code> is the port number of the Polyspace Access server.</li>
+  <li><code>POLYSPACE_ACCESS_URL</code> is the URL of the Polyspace Access server.</li>
+  <li><code>ps_helper_access</code> is a helper utlity to interact with the specified Polyspace Access server.
+      Syntax (shell scripts):
+      <pre>$ps_helper_access -upload ResultsDir</pre> 
+      where <code>ResultsDir</code> is a folder containing Polyspace results. The helper utility expands to:
+      <pre>polyspace-access -host <em>hostname</em> -port <em>portnumber</em> -login <em>username</em> -encrpyted-password <em>pwd</em></pre>
+      where the specified server settings and login credentials are used.
+   </li>
+</ul>

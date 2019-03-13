@@ -1,0 +1,20 @@
+<h3>Send common e-mail</h3>
+
+<p>
+  Send a common e-mail notification to multiple users. Specify a comma-separated list of e-mail usernames (or full e-mail addresses). If e-mail usernames are provided, the full e-mail address is determined from the server specified in the E-mail Notification section on the <a href="/configure">Configure System</a> page.
+</p>
+
+<p>
+  By default, the e-mail contains the status of the Jenkins build and has no attachment. You can customize the mail subject and body and send a Polyspace report (<code>.tsv</code> file) or another file in attachment. Specify the custom subject and body in text files. You can create files for attachments and e-mail content through scripts in the <strong>Build</strong> section of this project.
+</p>
+<p>
+  For instance, you can enter this specification:
+</p>
+<ul>
+   <li><strong>E-mail usernames</strong>: <code>johndoe, janedoe</code></li>
+   <li><strong>Attachment filename</strong>: <code>Results_All.tsv</code></li>
+   <li><strong>Mail subject filename</strong>: <code>mailsubject_common.txt</code></li>
+   <li><strong>Mail body filename</strong>: <code>mailbody_common.txt</code></li>
+</ul>
+
+
