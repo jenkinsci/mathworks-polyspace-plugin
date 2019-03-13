@@ -55,7 +55,7 @@ rm -rf Notification && mkdir -p Notification
 
 #
 # 1- Sniff the project
-#    Pre-requite: the sources must be checkout in the workspace
+#    Pre-requite: the sources must be checked out in the workspace
 #                 this can be performed using the jenkins git plugin: https://github.com/jenkinsci/git-plugin
 #
 build_cmd="gcc -c sources/*.c"

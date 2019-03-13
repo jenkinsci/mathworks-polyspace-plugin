@@ -24,9 +24,9 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <div>
   This plugin integrates 
-  <a href="https://www.mathworks.com/products/polyspace.html/" target="_blank">Polyspace</a>
+  <a href="https://www.mathworks.com/products/polyspace.html/" target="_blank">Polyspace (R)</a>
   products with Jenkins for automated analysis.
-  <a href="https://www.mathworks.com/products/polyspace.html/" target="_blank">Polyspace</a>
+  <a href="https://www.mathworks.com/products/polyspace.html/" target="_blank">Polyspace (R)</a>
   static code analysis products can prove absence of critical
   run-time errors using formal methods, find hundreds of classes of bugs, and
   check for adherence to coding rules (MISRA C, MISRA C++, JSF++) and security

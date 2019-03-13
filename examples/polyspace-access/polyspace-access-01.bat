@@ -41,7 +41,7 @@ rd /S /Q Notification && md Notification
 
 ::
 :: 1- Sniff the project
-::    Pre-requite: the sources must be checkout in the workspace
+::    Pre-requite: the sources must be checked out in the workspace
 ::                 this can be performed using the jenkins git plugin: https://github.com/jenkinsci/git-plugin
 ::
 set build_cmd=gcc -c sources/*.c
@@ -51,21 +51,21 @@ polyspace-configure.exe ^
       -prog %PROG% ^
       -author jenkins ^
       -output-options-file %PROG%.psopts ^
-      %build_cmd%
+      %build_cmd%    ||  EXIT /B 200
 
 ::
 :: 2- Run Bug Finder
 ::
-polyspace-bug-finder-server.exe -options-file %PROG%.psopts -results-dir %RESULT%
+polyspace-bug-finder-server.exe -options-file %PROG%.psopts -results-dir %RESULT%    ||  EXIT /B 200
 
 ::
 :: 3- Upload results on Polyspace Access
 ::
-%ps_helper_access% -create-project %PARENT_PROJECT_ON_ACCESS%
+%ps_helper_access% -create-project %PARENT_PROJECT_ON_ACCESS%    ||  EXIT /B 200
 %ps_helper_access% ^
       -upload %RESULT% ^
       -parent-project %PARENT_PROJECT_ON_ACCESS% ^
-      -project %PROG%
+      -project %PROG%    ||  EXIT /B 200
 
 ::
 :: 4- Export report and filter only the defects "High"
@@ -73,7 +73,7 @@ polyspace-bug-finder-server.exe -options-file %PROG%.psopts -results-dir %RESULT
 %ps_helper_access% ^
       -export %PARENT_PROJECT_ON_ACCESS%/%PROG% ^
       -o Notification\Results_All.tsv ^
-      -defects High
+      -defects High    ||  EXIT /B 200
 
 
 ::
