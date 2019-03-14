@@ -35,6 +35,7 @@ import hudson.model.*;
 import jenkins.model.JenkinsLocationConfiguration;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import javax.annotation.Nonnull;
@@ -129,79 +130,80 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         return "";
       }
 
-    // Read fileName, and returns its content in a  String
-    private String fileToString(String fileName) throws IOException
+    public void sendMail( @QueryParameter String sendMailTo,
+                          @QueryParameter String subject,
+                          @QueryParameter String text,
+                          @QueryParameter String attachSource,
+                          @QueryParameter String attachName
+                        ) throws IOException
     {
-      InputStream inputStream = new FileInputStream(fileName);
-      Reader fr = new InputStreamReader(inputStream, Mailer.descriptor().getCharset());
-      BufferedReader br = new BufferedReader(fr);
-      StringBuilder sb=new StringBuilder();
-      for (String this_line; (this_line = br.readLine()) != null; ) {
-        sb.append(this_line).append("\n");
+      try {
+        String charset = Mailer.descriptor().getCharset();
+        MimeMessage msg = new MimeMessage(Mailer.descriptor().createSession());
+        msg.setSubject(subject, charset);
+        msg.setFrom(stringToAddress(getJenkinsLocationConfiguration().getAdminAddress(), charset));
+
+        String replyToAddress = Mailer.descriptor().getReplyToAddress();
+        if (StringUtils.isNotBlank(replyToAddress)) {
+            msg.setReplyTo(new Address[]{stringToAddress(replyToAddress, charset)});
+        }
+        msg.setSentDate(new Date());
+
+        // Add all the recipients
+        StringTokenizer tokens = new StringTokenizer(sendMailTo, " ,;");
+        while (tokens.hasMoreTokens()) {
+          msg.addRecipient(Message.RecipientType.TO, stringToAddress(tokens.nextToken(), charset));
+        }
+
+        // create the message body, with the text followed by the file to attach if any
+        Multipart multipart = new MimeMultipart();
+
+        if (!attachName.equals("")) {
+          File file = new File(attachSource);
+          if (file.length()  > 10*1024*1024) {
+            // size of the attachement is too large
+            // do not attach, and add a message in the mail body
+            text += "\n\nSize of the attached file is too large  -  Not attached\n";
+          } else {
+          MimeBodyPart attachmentBodyPart= new MimeBodyPart();
+          DataSource source = new FileDataSource(attachSource);
+          attachmentBodyPart.setDataHandler(new DataHandler(source));
+          attachmentBodyPart.setFileName(attachName);
+          multipart.addBodyPart(attachmentBodyPart);
+        }
+        }
+
+        MimeBodyPart textBodyPart = new MimeBodyPart();
+        textBodyPart.setText(text, charset);
+        multipart.addBodyPart(textBodyPart);
+         
+        msg.setContent(multipart);
+        Transport.send(msg);
+      } catch (RuntimeException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new IOException(e.getMessage());
       }
-      br.close();
-
-      return sb.toString();
     }
-    public void doSendMail( @QueryParameter String sendMailTo,
-                            @QueryParameter String subject,
-                            @QueryParameter String text,
-                            @QueryParameter String attachSource,
-                            @QueryParameter String attachName
-                           ) throws IOException
+
+    private String getFilenameOwner(final String name, final String owner, FilePath workspace) throws java.io.IOException
     {
-          try {
-            String charset = Mailer.descriptor().getCharset();
-            MimeMessage msg = new MimeMessage(Mailer.descriptor().createSession());
-            msg.setSubject(subject, charset);
-            msg.setFrom(stringToAddress(getJenkinsLocationConfiguration().getAdminAddress(), charset));
-
-            String replyToAddress = Mailer.descriptor().getReplyToAddress();
-            if (StringUtils.isNotBlank(replyToAddress)) {
-                msg.setReplyTo(new Address[]{stringToAddress(replyToAddress, charset)});
-            }
-            msg.setSentDate(new Date());
-
-            // Add all the recipients
-            StringTokenizer tokens = new StringTokenizer(sendMailTo, " ,;");
-            while (tokens.hasMoreTokens()) {
-              msg.addRecipient(Message.RecipientType.TO, stringToAddress(tokens.nextToken(), charset));
-            }
-
-            // create the message body, with the text followed by the file to attach if any
-            Multipart multipart = new MimeMultipart();
-
-            MimeBodyPart textBodyPart = new MimeBodyPart();
-            textBodyPart.setText(text, charset);
-            multipart.addBodyPart(textBodyPart);
-
-            if (!attachName.equals("")) {
-              MimeBodyPart attachmentBodyPart= new MimeBodyPart();
-              DataSource source = new FileDataSource(attachSource);
-              attachmentBodyPart.setDataHandler(new DataHandler(source));
-              attachmentBodyPart.setFileName(attachName);
-              multipart.addBodyPart(attachmentBodyPart);
-            }
-
-            msg.setContent(multipart);
-            Transport.send(msg);
-          } catch (RuntimeException e) {
-            throw e;
-          } catch (Exception e) {
-            throw new IOException(e.getMessage());
-          }
+      String fileName = workspace + File.separator;
+      if (owner.equals("")) {
+        fileName += name;
+      } else {
+        fileName += name + PolyspaceHelpers.getReportOwner(name, owner);
+      }
+      InputStream inputStream = new FileInputStream(fileName);
+      return IOUtils.toString(inputStream);
     }
 
     private String generateMailBody(final String body, final String owner, final String attachName, final String attachSource, FilePath workspace, Run<?,?> build) {
       try {
         if ((body != null) && !body.equals("")) {
-          if (owner.equals("")) {
-            return fileToString(workspace + File.separator + mailBody);
-          } else {
-            return fileToString(workspace + File.separator + PolyspaceHelpers.getReportOwner(body, owner));
-          }
+          return getFilenameOwner(body, owner, workspace);
         }
-      } catch (Exception e) {
+      } catch (java.io.IOException e) {
         // Generate the generic mail body
       }
 
@@ -236,16 +238,12 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
     }
 
     private String generateMailSubject(final String subject, final String owner, FilePath workspace, Run<?,?> build) {
-      if ((subject != null) && !subject.equals("")) {
-        try {
-          if (owner.equals("")) {
-            return fileToString(workspace + File.separator + subject);
-          } else {
-            return fileToString(workspace + File.separator + PolyspaceHelpers.getReportOwner(subject, owner));
-          }
-        } catch (Exception e) {
-          // Generate the generic mail subject
+      try {
+        if ((subject != null) && !subject.equals("")) {
+          return getFilenameOwner(subject, owner, workspace);
         }
+      } catch (java.io.IOException e) {
+        // Generate the generic mail subject
       }
 
       String text = "";
@@ -269,7 +267,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
           attachSource = workspace + File.separator + fileToAttach;
           attachName = getAttachName(attachSource);
         }
-        doSendMail(recipients, generateMailSubject(mailSubject, "", workspace, build), generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
+        sendMail(recipients, generateMailSubject(mailSubject, "", workspace, build), generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
       }
 
       if (sendToOwners && (queryBaseName != null) && !queryBaseName.equals("")) {
@@ -290,7 +288,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
             String attachSource = workspace + File.separator + PolyspaceHelpers.getReportOwner(queryBaseName, owner);
             String attachName = getAttachName(attachSource);
-            doSendMail(to, generateMailSubject(mailSubjectBaseName, owner, workspace, build), generateMailBody(mailBodyBaseName, owner, attachName, attachSource, workspace, build), attachSource, attachName);
+            sendMail(to, generateMailSubject(mailSubjectBaseName, owner, workspace, build), generateMailBody(mailBodyBaseName, owner, attachName, attachSource, workspace, build), attachSource, attachName);
           }
           br.close();
         }

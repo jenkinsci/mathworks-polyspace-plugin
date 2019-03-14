@@ -30,6 +30,7 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import java.io.*;
 import java.util.*;
+import jenkins.model.Jenkins;
 
 public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConfig> {
 
@@ -56,6 +57,7 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
     public static class DescriptorImpl extends Descriptor<PolyspaceBinConfig> {
       public String getDisplayName() { return Messages.polyspaceBinConfigDisplayName(); }
       public FormValidation doCheckPolyspacePath(@QueryParameter String polyspacePath) {
+        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
         List<String> Command = new ArrayList<String>();
         Command.add(polyspacePath + File.separator + "polyspace" + PolyspaceHelpers.exeSuffix());
         Command.add("-h");

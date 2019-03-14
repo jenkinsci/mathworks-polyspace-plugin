@@ -218,7 +218,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     }
 
     public static DescriptorImpl descriptor() {
-        // TODO 1.590+ Jenkins.getActiveInstance
         final Jenkins jenkins = Jenkins.getInstance();
         if (jenkins == null) {
             throw new IllegalStateException("Jenkins instance is not ready");
@@ -342,10 +341,15 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
             return items;
         }
 
-        public FormValidation doCheckPolyspaceMetrics(@QueryParameter String metricsConfig, @QueryParameter String binConfig)
+        public FormValidation doCheckPolyspaceMetrics(@AncestorInPath Item item, @QueryParameter String metricsConfig, @QueryParameter String binConfig)
             throws IOException, ServletException {
           final PolyspaceBinConfig bin = getBinConfig(binConfig);
           final PolyspaceMetricsConfig metrics = getMetricsConfig(metricsConfig);
+
+          if (item == null) {
+            return FormValidation.error(com.mathworks.polyspace.config.Messages.internalError());
+          }
+          item.checkPermission(Item.CONFIGURE);
 
           if ((metrics == null) || (metrics.getPolyspaceMetricsName().equals(getUnsetValue()))) {
             return FormValidation.warning("Polyspace Metrics Configuration is not provided");
@@ -383,60 +387,65 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
                     );
         }
 
-        public FormValidation doCheckPolyspaceAccess(@QueryParameter String serverConfig, @QueryParameter String polyspaceAccessCredentialId, @QueryParameter String binConfig) throws IOException, InterruptedException
+        public FormValidation doCheckPolyspaceAccess(@AncestorInPath Item item, @QueryParameter String serverConfig, @QueryParameter String polyspaceAccessCredentialId, @QueryParameter String binConfig) throws IOException, InterruptedException
         {
-            final PolyspaceBinConfig bin = getBinConfig(binConfig);
+          if (item == null) {
+            return FormValidation.error(com.mathworks.polyspace.config.Messages.internalError());
+          }
+          item.checkPermission(Item.CONFIGURE);
 
-            String path;
-            String value;
+          final PolyspaceBinConfig bin = getBinConfig(binConfig);
 
-            if (bin != null) {
-                path = bin.getPolyspacePath() + File.separator;
-            } else {
-                path = "";
-            }
-            List<String> Command = new ArrayList<String>();
-            Command.add(path + "polyspace-access" + PolyspaceHelpers.exeSuffix());
+          String path;
+          String value;
 
-            final PolyspaceAccessConfig server = getServerConfig(serverConfig);
-            if (server == null) {
-              return FormValidation.warning("Polyspace Access Configuration is not provided");
-            }
+          if (bin != null) {
+              path = bin.getPolyspacePath() + File.separator;
+          } else {
+              path = "";
+          }
+          List<String> Command = new ArrayList<String>();
+          Command.add(path + "polyspace-access" + PolyspaceHelpers.exeSuffix());
 
-            String user = getPolyspaceAccessUser(polyspaceAccessCredentialId);
-            String password = getPolyspaceAccessPassword(polyspaceAccessCredentialId);
-            if (StringUtils.isEmpty(user) || StringUtils.isEmpty(password)) {
-              return FormValidation.error("Missing login / password");
-            }
-            Command.add("-login");
-            Command.add(user);
-            Command.add("-encrypted-password");
-            Command.add(password);
+          final PolyspaceAccessConfig server = getServerConfig(serverConfig);
+          if (server == null) {
+            return FormValidation.warning("Polyspace Access Configuration is not provided");
+          }
 
-            value = server.getPolyspaceAccessProtocol();
-            if (StringUtils.isNotEmpty(value)) {
-                Command.add("-protocol");
-                Command.add(value);
-            }
+          String user = getPolyspaceAccessUser(polyspaceAccessCredentialId);
+          String password = getPolyspaceAccessPassword(polyspaceAccessCredentialId);
+          if (StringUtils.isEmpty(user) || StringUtils.isEmpty(password)) {
+            return FormValidation.error("Missing login / password");
+          }
+          Command.add("-login");
+          Command.add(user);
+          Command.add("-encrypted-password");
+          Command.add(password);
 
-            value = server.getPolyspaceAccessHost();
-            if (StringUtils.isNotEmpty(value)) {
-                Command.add("-host");
-                Command.add(value);
-            }
+          value = server.getPolyspaceAccessProtocol();
+          if (StringUtils.isNotEmpty(value)) {
+              Command.add("-protocol");
+              Command.add(value);
+          }
 
-            value = server.getPolyspaceAccessPort();
-            if (StringUtils.isNotEmpty(value)) {
-                Command.add("-port");
-                Command.add(value);
-            }
+          value = server.getPolyspaceAccessHost();
+          if (StringUtils.isNotEmpty(value)) {
+              Command.add("-host");
+              Command.add(value);
+          }
 
-            Command.add("-list-project");
-            if (PolyspaceHelpers.checkPolyspaceCommand(Command)) {
-              return FormValidation.ok(com.mathworks.polyspace.config.Messages.polyspaceCorrectConfig());
-            } else {
-              return FormValidation.error(com.mathworks.polyspace.config.Messages.polyspaceAccessWrongConfig());
-            }
+          value = server.getPolyspaceAccessPort();
+          if (StringUtils.isNotEmpty(value)) {
+              Command.add("-port");
+              Command.add(value);
+          }
+
+          Command.add("-list-project");
+          if (PolyspaceHelpers.checkPolyspaceCommand(Command)) {
+            return FormValidation.ok(com.mathworks.polyspace.config.Messages.polyspaceCorrectConfig());
+          } else {
+            return FormValidation.error(com.mathworks.polyspace.config.Messages.polyspaceAccessWrongConfig());
+          }
         }
     }
 }
