@@ -148,7 +148,7 @@ exit 0
 # Performed by the post-build action, when Polyspace Notification post-build action
 # is parametrized as:
 #
-#   Send to recipients [Checked]
+#   Send common e-mail [Checked]
 #     E-mail usernames:      Users to receive the notification, separated by commas
 #     Attachment filename:   Notification/Results_All.tsv
 #     Mail subject filename: <empty>

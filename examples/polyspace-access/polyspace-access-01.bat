@@ -83,7 +83,7 @@ polyspace-bug-finder-server.exe -options-file %PROG%.psopts -results-dir %RESULT
 :: Performed by the post-build action, when Polyspace Notification post-build action
 :: is parametrized as:
 ::
-::   Send to recipients [Checked]
+::   Send common e-mail [Checked]
 ::     Recipients: Users to receive the notification, separated by commas
 ::     File to attach: Notification\Results_All.tsv
 ::     Mail Subject: <empty>
