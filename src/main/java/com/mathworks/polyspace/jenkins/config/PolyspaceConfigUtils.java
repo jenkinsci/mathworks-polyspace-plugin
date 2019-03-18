@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.config;
+package com.mathworks.polyspace.jenkins.config;
 
 import hudson.util.FormValidation;
 import org.apache.commons.lang3.StringUtils;

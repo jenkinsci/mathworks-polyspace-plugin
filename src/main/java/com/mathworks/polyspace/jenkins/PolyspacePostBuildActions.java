@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace;
+package com.mathworks.polyspace.jenkins;
 
 import org.kohsuke.stapler.*;
 import hudson.Extension;
@@ -332,7 +332,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         }
 
         public String getDisplayName() {
-            return com.mathworks.polyspace.config.Messages.polyspaceNotification();
+            return com.mathworks.polyspace.jenkins.config.Messages.polyspaceNotification();
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {

@@ -19,10 +19,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.test;
+package com.mathworks.polyspace.jenkins.test;
 
-import com.mathworks.polyspace.config.*;
-import com.mathworks.polyspace.*;
+import com.mathworks.polyspace.jenkins.config.*;
+import com.mathworks.polyspace.jenkins.*;
 import hudson.Functions;
 import hudson.model.*;
 import hudson.tasks.*;

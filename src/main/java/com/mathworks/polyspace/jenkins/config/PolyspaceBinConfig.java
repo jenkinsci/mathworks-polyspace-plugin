@@ -19,9 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.config;
+package com.mathworks.polyspace.jenkins.config;
 
-import com.mathworks.polyspace.PolyspaceHelpers;
+import com.mathworks.polyspace.jenkins.PolyspaceHelpers;
 
 import org.kohsuke.stapler.*;
 import hudson.Extension;

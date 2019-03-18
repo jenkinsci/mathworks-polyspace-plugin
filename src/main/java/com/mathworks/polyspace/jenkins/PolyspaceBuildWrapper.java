@@ -19,9 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace;
+package com.mathworks.polyspace.jenkins;
 
-import com.mathworks.polyspace.config.*;
+import com.mathworks.polyspace.jenkins.config.*;
 
 import org.kohsuke.stapler.*;
 import hudson.Extension;
@@ -162,7 +162,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
       } else {
         polyspaceJar = polyspaceJar.replace(" ", "\\ ");
       }
-      context.env("ps_helper", "java -cp " +  polyspaceJar + " com.mathworks.polyspace.PolyspaceHelpers");
+      context.env("ps_helper", "java -cp " +  polyspaceJar + " com.mathworks.polyspace.jenkins.PolyspaceHelpers");
     }
 
     @Override
@@ -249,7 +249,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
             return true;
         }
 
-        public String getDisplayName() { return com.mathworks.polyspace.config.Messages.polyspaceBuildWrapperDisplayName(); }
+        public String getDisplayName() { return com.mathworks.polyspace.jenkins.config.Messages.polyspaceBuildWrapperDisplayName(); }
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
@@ -347,7 +347,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           final PolyspaceMetricsConfig metrics = getMetricsConfig(metricsConfig);
 
           if (item == null) {
-            return FormValidation.error(com.mathworks.polyspace.config.Messages.internalError());
+            return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.internalError());
           }
           item.checkPermission(Item.CONFIGURE);
 
@@ -367,7 +367,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           Command.add(metrics.getPolyspaceMetricsName());
           Command.add("-get-projects-list");
           if (PolyspaceHelpers.checkPolyspaceCommand(Command)) {
-            return FormValidation.ok(com.mathworks.polyspace.config.Messages.polyspaceCorrectConfig());
+            return FormValidation.ok(com.mathworks.polyspace.jenkins.config.Messages.polyspaceCorrectConfig());
           } else {
             return FormValidation.error("Wrong Configuration\nCannot access Metrics server using polyspace-results-repository");
           }
@@ -390,7 +390,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
         public FormValidation doCheckPolyspaceAccess(@AncestorInPath Item item, @QueryParameter String serverConfig, @QueryParameter String polyspaceAccessCredentialId, @QueryParameter String binConfig) throws IOException, InterruptedException
         {
           if (item == null) {
-            return FormValidation.error(com.mathworks.polyspace.config.Messages.internalError());
+            return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.internalError());
           }
           item.checkPermission(Item.CONFIGURE);
 
@@ -442,9 +442,9 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
 
           Command.add("-list-project");
           if (PolyspaceHelpers.checkPolyspaceCommand(Command)) {
-            return FormValidation.ok(com.mathworks.polyspace.config.Messages.polyspaceCorrectConfig());
+            return FormValidation.ok(com.mathworks.polyspace.jenkins.config.Messages.polyspaceCorrectConfig());
           } else {
-            return FormValidation.error(com.mathworks.polyspace.config.Messages.polyspaceAccessWrongConfig());
+            return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.polyspaceAccessWrongConfig());
           }
         }
     }

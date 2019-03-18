@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace;
+package com.mathworks.polyspace.jenkins;
 
 import hudson.tasks.*;      // The mailer
 import org.apache.commons.lang3.SystemUtils;
