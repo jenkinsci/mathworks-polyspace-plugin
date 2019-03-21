@@ -18,7 +18,7 @@
 
   <artifactId>mathworks-polyspace</artifactId>
   <version>0.1.1-SNAPSHOT</version>
-  <groupId>com.mathworks.polyspace.jenkins</groupId>
+  <groupId>org.jenkins-ci.plugins</groupId>
   <name>Mathworks Polyspace Plugin</name>
   <url>https://wiki.jenkins.io/display/JENKINS/Mathworks+Polyspace+Plugin</url>
   <packaging>hpi</packaging>
