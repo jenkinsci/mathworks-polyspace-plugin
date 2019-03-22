@@ -17,7 +17,7 @@
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
   <groupId>io.jenkins.plugins</groupId>
   <name>Mathworks Polyspace Plugin</name>
   <url>https://wiki.jenkins.io/display/JENKINS/Mathworks+Polyspace+Plugin</url>
@@ -44,7 +44,7 @@
     <connection>scm:git:ssh://github.com:jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin.git</url>
-    <tag>HEAD</tag>
+    <tag>mathworks-polyspace-0.1.1</tag>
   </scm>
 
   <repositories>
