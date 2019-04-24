@@ -21,9 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 
-# Jenkins Mathworks Polyspace Plugin
+# Jenkins MathWorks Polyspace Plugin
 
-The Mathworks Polyspace Plugin for Jenkins enables automated Polyspace analyses within Jenkins.
+The MathWorks Polyspace Plugin for Jenkins enables automated Polyspace analyses within Jenkins.
 
 
 ### Getting Started 
