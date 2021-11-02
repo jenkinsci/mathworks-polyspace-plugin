@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The MathWorks, Inc.
+// Copyright (c) 2019-2021 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,11 +40,16 @@ public class PolyspaceBuildTest {
   /* the wrapper to be used by all tests */
   public PolyspaceBuildWrapper wrapper;
   
-  private final File polyspaceFile = new File("/home/pbrand/bin/matlab/polyspace/bin/polyspace");
-  
+  private File ROOT_TMP_FOLDER;
+  private String ROOT_TMP = System.getProperty("java.io.tmpdir") + File.separator + "jenkins-plugin-unittests";
+  private String BIN_NOT_FOUND = ROOT_TMP + File.separator +  "binNotFound";
+  private String BIN_NOT_VALID = ROOT_TMP + File.separator +  "NotValid/polyspace/bin";
+  private String FAKE_BIN_FOLDER = ROOT_TMP + File.separator +  "NoValidBinary/polyspace/bin";
+  private String FAKE_POLYSPACE = FAKE_BIN_FOLDER + File.separator +  "polyspace-bug-finder";
+
   /* Create configuration and wrapper common to all tests */
   @Before
-  public void initialize() {
+  public void initialize() throws Exception {
     // Set some binaries
     PolyspaceBinConfig bin1 = new PolyspaceBinConfig();
     bin1.setName("bin1");
@@ -83,6 +88,18 @@ public class PolyspaceBuildTest {
     wrapper.getDescriptor().addPolyspaceMetricsConfig(metrics2);
     wrapper.getDescriptor().addPolyspaceAccessConfig(access1);
     wrapper.getDescriptor().addPolyspaceAccessConfig(access2);
+
+    // Create some folders and files to be checked
+    ROOT_TMP_FOLDER = new File(ROOT_TMP);
+    ROOT_TMP_FOLDER.mkdirs();
+    new File(BIN_NOT_VALID).mkdirs();
+    new File(FAKE_BIN_FOLDER).mkdirs();
+    new File(FAKE_POLYSPACE).createNewFile();
+  }
+
+  @After
+  public void finalize() {
+    ROOT_TMP_FOLDER.delete();
   }
 
   // Check the drop down list, that can be chosen in "Build Environment"
@@ -256,41 +273,57 @@ public class PolyspaceBuildTest {
       "http://access2.com:19444");
   }
 
-  // Check test functions that checks parameters
+  // Check test functions for Metrics
   @Test
-  public void testChecks() throws Exception {
-    FormValidation ok = FormValidation.ok();
-    FormValidation port_ko = FormValidation.error("Port must be a number");
-    FormValidation protocol_ko = FormValidation.error("Protocol must be http or https");
-    FormValidation bin_ok = FormValidation.ok("Correct Configuration");
-    FormValidation bin_ko = FormValidation.error("Provide path to subfolder polyspace/bin in Polyspace installation folder");
-
+  public void testCheckMetrics() throws Exception {
     PolyspaceMetricsConfig.DescriptorImpl desc_metrics = new PolyspaceMetricsConfig.DescriptorImpl();
-    FormValidation port_metrics_ok = desc_metrics.doCheckPolyspaceMetricsPort("1234");
-    FormValidation port_metrics_ko = desc_metrics.doCheckPolyspaceMetricsPort("wrong-port");
-    assertEquals(ok, port_metrics_ok);
-    assertEquals(port_ko.renderHtml(), port_metrics_ko.renderHtml());
 
+    FormValidation port_metrics_ok = desc_metrics.doCheckPolyspaceMetricsPort("1234");
+    assertEquals(FormValidation.Kind.OK, port_metrics_ok.kind);
+
+    FormValidation port_metrics_ko = desc_metrics.doCheckPolyspaceMetricsPort("wrong-port");
+    assertEquals(FormValidation.Kind.ERROR, port_metrics_ko.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.portMustBeANumber(), port_metrics_ko.renderHtml());
+  }
+
+  // Check test functions for Access
+  @Test
+  public void testCheckAccess() throws Exception {
     PolyspaceAccessConfig.DescriptorImpl desc_access = new PolyspaceAccessConfig.DescriptorImpl();
+
     FormValidation port_access_ok = desc_access.doCheckPolyspaceAccessPort("1234");
+    assertEquals(FormValidation.Kind.OK, port_access_ok.kind);
+
     FormValidation port_access_ko = desc_access.doCheckPolyspaceAccessPort("wrong-port");
-    assertEquals(ok, port_access_ok);
-    assertEquals(port_ko.renderHtml(), port_access_ko.renderHtml());
+    assertEquals(FormValidation.Kind.ERROR, port_access_ko.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.portMustBeANumber(), port_access_ko.renderHtml());
     
     FormValidation protocol_access_http  = desc_access.doCheckPolyspaceAccessProtocol("http");
+    assertEquals(FormValidation.Kind.OK, protocol_access_http.kind);
+
     FormValidation protocol_access_https = desc_access.doCheckPolyspaceAccessProtocol("https");
+    assertEquals(FormValidation.Kind.OK, protocol_access_https.kind);
+
     FormValidation protocol_access_ko    = desc_access.doCheckPolyspaceAccessProtocol("wrong_protocol");
-    assertEquals(ok, protocol_access_http);
-    assertEquals(ok, protocol_access_https);
-    assertEquals(protocol_ko.renderHtml(), protocol_access_ko.renderHtml());
-    
+    assertEquals(FormValidation.Kind.ERROR, protocol_access_ko.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.wrongProtocol(), protocol_access_ko.renderHtml());
+  }
+
+  // Check test functions that check parameters
+  @Test
+  public void testCheckPolyspaceBin() throws Exception {
     PolyspaceBinConfig.DescriptorImpl desc_bin = new PolyspaceBinConfig.DescriptorImpl();
-    FormValidation path_bin_ko = desc_bin.doCheckPolyspacePath("wrong_bin");
-    assertEquals(bin_ko.renderHtml(), path_bin_ko.renderHtml());
-    if (polyspaceFile.exists()) {
-      // can be tested only when a polyspace configuration is provided on your machine
-      FormValidation path_bin_ok = desc_bin.doCheckPolyspacePath("/home/pbrand/bin/matlab/polyspace/bin");
-      assertEquals(bin_ok.renderHtml(), path_bin_ok.renderHtml());
-    }
+
+    FormValidation path_bin_not_found = desc_bin.doCheckPolyspacePath(BIN_NOT_FOUND); // Folder was not created
+    assertEquals(FormValidation.Kind.WARNING, path_bin_not_found.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotFound(), path_bin_not_found.renderHtml());
+
+    FormValidation path_bin_not_valid = desc_bin.doCheckPolyspacePath(BIN_NOT_VALID); // Folder exists it but it does not contain a polyspace binary
+    assertEquals(FormValidation.Kind.WARNING, path_bin_not_valid.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotValid(), path_bin_not_valid.renderHtml());
+
+    FormValidation path_bin_wrong_config = desc_bin.doCheckPolyspacePath(FAKE_BIN_FOLDER); // Folder exists but contains a wrong polyspace binary
+    assertEquals(FormValidation.Kind.ERROR, path_bin_wrong_config.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinWrongConfig() + " &#039;" + FAKE_POLYSPACE + " -h&#039;", path_bin_wrong_config.renderHtml());
   }
 }

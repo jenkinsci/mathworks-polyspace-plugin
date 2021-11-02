@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The MathWorks, Inc.
+// Copyright (c) 2019-2021 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,7 @@ package com.mathworks.polyspace.jenkins.config;
 
 import com.mathworks.polyspace.jenkins.PolyspaceHelpers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.*;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -58,13 +59,27 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
       public String getDisplayName() { return Messages.polyspaceBinConfigDisplayName(); }
       public FormValidation doCheckPolyspacePath(@QueryParameter String polyspacePath) {
         Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
-        List<String> Command = new ArrayList<String>();
-        Command.add(polyspacePath + File.separator + "polyspace" + PolyspaceHelpers.exeSuffix());
-        Command.add("-h");
-        if (PolyspaceHelpers.checkPolyspaceCommand(Command)) {
+        String command;
+        try {
+          PolyspaceHelpers.checkPolyspaceBinFolderExists(polyspacePath);
+          command = polyspacePath + File.separator + "polyspace-bug-finder" + PolyspaceHelpers.exeSuffix();
+          try {
+            PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+          } catch (FormValidation val) {
+            command = polyspacePath + File.separator + "polyspace-bug-finder-server" + PolyspaceHelpers.exeSuffix();
+            PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+          }
+        } catch (FormValidation val) {
+          return val;
+        }
+        List<String> polyspace = new ArrayList<String>();
+        polyspace.add(command);
+        polyspace.add("-h");
+        String commandString = StringUtils.join(polyspace, ' ');
+        if (PolyspaceHelpers.checkPolyspaceCommand(polyspace)) {
           return FormValidation.ok(Messages.polyspaceCorrectConfig());
         } else {
-          return FormValidation.error(Messages.polyspaceBinWrongConfig());
+          return FormValidation.error(Messages.polyspaceBinWrongConfig() + " '" + commandString + "'");
         }
       }
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The MathWorks, Inc.
+// Copyright (c) 2019-2021 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 public final class PolyspaceConfigUtils {
   public static FormValidation doCheckProtocol( String value) {
     if (!(value.equals("http") || value.equals("https"))) {
-      return FormValidation.error("Protocol must be http or https");
+      return FormValidation.error(Messages.wrongProtocol());
     }
     return FormValidation.ok();
   }
@@ -36,6 +36,6 @@ public final class PolyspaceConfigUtils {
     if (StringUtils.isNumeric(value)) {
       return FormValidation.ok();
     }
-    return FormValidation.error("Port must be a number");
+    return FormValidation.error(Messages.portMustBeANumber());
   }
 }

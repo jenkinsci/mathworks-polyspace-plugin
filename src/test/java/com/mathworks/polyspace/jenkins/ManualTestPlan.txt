@@ -1,0 +1,89 @@
+// Copyright (c) 2019-2021 The MathWorks, Inc.
+// All Rights Reserved.
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+- Execute plan on Windows:
+  - Login if neccessary.
+  - Install plugin:
+    - Go to "Dashboard > Manage Jenkins > Manage Plugins".
+    - Go to the "Advanced" tab.
+    - In the "Upload Plugin" section, click on "Choose File".
+    - Select "<sandbox>/mathworks-polyspace-plugin/target/mathworks-polyspace.hpi.
+    - Click on "Upload".
+    - The screen goes to "Installing Plugins/Upgrades": select the "Restart Jenkins when..." checkbox.
+    - Click the reload button of your browser and wait until Jenkins has restarted.
+  - Login if neccessary.
+  - Create Jenkins credentials for an Access user:
+    - Go to "Dashboard > Manage Jenkins > Manage Credentials".
+    - Click on the "Jenkins" store.
+    - Click on the "Global credentials (unrestricted)" domain.
+    - On the left menu, click "Add Credentials" to add a new Access user/encrypted-password in Jenkins.
+    - Note that you must give an encrypted password, generated with "polyspace-access -encrypt-password".
+    - Click "OK" when done.
+  - Open a new Jenkins tab in your browser. Keep both tabs side by side on your screen.
+  - On the LEFT tab, set up the Polyspace configuration:
+    - Go to "Dashboard > Manage Jenkins > Configure System".
+    - Scroll down to the Polyspace section.
+    - Click on "Add Polyspace Installation Folder":
+      - Give it some name.
+      - In the "Path ending with polyspace/bin" box, enter an existing folder containing a working polyspace-bug-finder[-server].exe binary. Check the message:
+        - Message type = OK
+        - Message content = Correct Configuration.
+      - Click on "Apply" to save settings.
+    - Click on "Add Polyspace Access server":
+      - Fill name (a label to be displayed in Jenkins), protocol (http or https), host name and port number with working configuration.
+      - Click on "Apply" to save settings.
+  - In the RIGHT tab, create a new job:
+    - Go to "Dashboard > New Item": enter some name, select "Freestyle project" and click OK.
+    - Scroll down to the "Build Environment" section and select the "Select Polyspace installation settings" checkbox.
+    - In the "Polyspace installation folder" section, select the "Polyspace Installation Folder" configuration you have created previously.
+    - In the "Polyspace Access server" section, select the "Polyspace Access server" configuration you have created previously.
+    - In the "Polyspace Access username and encrypted password" section, select the Access user you have created previously.
+    - Click on "Check server settings" in the "Polyspace Access server" section. Assuming the provided configuration is working, check the message:
+      - Waiting message: "Check server settings..." (this takes a while when the configuration is correct).
+      - Message type = OK
+      - Message content = Correct Configuration.
+  - In the LEFT tab, modify the "Polyspace installation folder": 
+    - In the "Path ending with polyspace/bin" box, enter an unknown folder.
+    - Click on TAB for the change to be taken into account.
+    - Check the message:
+      - Message type = WARNING
+      - Message content = Specified polyspace/bin folder path cannot be found on Jenkins server. If you run a distributed build, check that the bin folder exists on the worker machine.
+      - Click on "Apply" to save settings.
+  - In the RIGHT tab:
+    - Click on "Check server settings" in the "Polyspace Access server" section.
+    - Check the message: same as above.
+  - Repeat the same workflow and check the returned message on both LEFT and RIGHT tabs:
+    - Check the message for an existing folder not containing any polyspace-bug-finder[-server].exe binary
+      - Message type = WARNING
+      - Message content = Specified polyspace/bin folder path does not point to a valid Polyspace product. If you run a distributed build, check that the bin folder on the worker machine points to a valid Polyspace product.
+      - Click on "Apply" to save settings.
+    - Check the message for an existing folder containing a fake polyspace-bug-finder[-server].exe binary.
+      - Message type = ERROR
+      - Message content = Command used to test Polyspace binary failed: 'C:\your\test\path\polyspace\bin\polyspace-bug-finder.exe -h'
+      - Click on "Apply" to save settings.
+    - Check the message for any wrong "Polyspace Access server" configuration:
+      - Unexpected protocol:
+        - Message type = ERROR
+        - Message content = "Protocol must be http or https."
+      - Wrong protocol (http instead of https or vice-versa), unknown hostname, wrong port, wrong Access version (Access server version does not match "Polyspace Installation Folder" version):
+        - Message type = ERROR
+        - Message content = "Could not connect to Polyspace Access server. For more information run this command: '\\your\path\to\matlab\polyspace\bin\polyspace-access.exe -login <user> -encrypted-password <encrypted-password> -protocol <protocol> -host <hostname> -port <port> -list-project"
+- Execute same plan on Linux.
