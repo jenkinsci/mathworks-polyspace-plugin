@@ -65,9 +65,15 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
           command = polyspacePath + File.separator + "polyspace-bug-finder" + PolyspaceHelpers.exeSuffix();
           try {
             PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
-          } catch (FormValidation val) {
-            command = polyspacePath + File.separator + "polyspace-bug-finder-server" + PolyspaceHelpers.exeSuffix();
-            PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+          } catch (FormValidation val1) {
+            try {
+              command = polyspacePath + File.separator + "polyspace-bug-finder-server" + PolyspaceHelpers.exeSuffix();
+              PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+            } catch (FormValidation val2) {
+              // Manage pre-19a versions of Polyspace
+              command = polyspacePath + File.separator + "polyspace-bug-finder-nodesktop" + PolyspaceHelpers.exeSuffix();
+              PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+            }
           }
         } catch (FormValidation val) {
           return val;

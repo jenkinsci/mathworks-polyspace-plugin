@@ -46,6 +46,9 @@
       - In the "Path ending with polyspace/bin" box, enter an existing folder containing a working polyspace-bug-finder[-server].exe binary. Check the message:
         - Message type = OK
         - Message content = Correct Configuration.
+      - In the "Path ending with polyspace/bin" box, enter an existing folder containing a working polyspace-bug-finder-nodesktop.exe binary for pre-19a versions. Check the message:
+        - Message type = OK
+        - Message content = Correct Configuration.
       - Click on "Apply" to save settings.
     - Click on "Add Polyspace Access server":
       - Fill name (a label to be displayed in Jenkins), protocol (http or https), host name and port number with working configuration.
