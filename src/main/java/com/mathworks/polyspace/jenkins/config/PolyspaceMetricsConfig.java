@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The MathWorks, Inc.
+// Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,6 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import java.io.*;
-import java.util.*;
 import javax.servlet.ServletException;
 
 public class PolyspaceMetricsConfig extends AbstractDescribableImpl<PolyspaceMetricsConfig> {

@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 The MathWorks, Inc.
+// Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,8 +25,6 @@ import com.mathworks.polyspace.jenkins.config.*;
 
 import org.kohsuke.stapler.*;
 import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import java.io.*;
 import java.util.*;
@@ -196,7 +194,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
         if (!StringUtils.isEmpty(credentialId)){
             StandardCredentials credentials = CredentialsMatchers.firstOrNull(
                     CredentialsProvider.lookupCredentials(
-                            StandardCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, Collections.<DomainRequirement>emptyList()
+                            StandardCredentials.class, Jenkins.get(), ACL.SYSTEM, Collections.<DomainRequirement>emptyList()
                     ), CredentialsMatchers.withId(credentialId)
             );
 
@@ -218,7 +216,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     }
 
     public static DescriptorImpl descriptor() {
-        final Jenkins jenkins = Jenkins.getInstance();
+        final Jenkins jenkins = Jenkins.get();
         if (jenkins == null) {
             throw new IllegalStateException("Jenkins instance is not ready");
         }
@@ -355,10 +353,10 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
             return FormValidation.warning("Polyspace Metrics Configuration is not provided");
           }
 
-          String command = bin.getPolyspacePath() + File.separator + "polyspace-results-repository" + PolyspaceHelpers.exeSuffix();
+          String command = bin.getPolyspacePath() + File.separator + "polyspace-results-repository" + PolyspaceConfigUtils.exeSuffix();
           try {
-            PolyspaceHelpers.checkPolyspaceBinFolderExists(bin.getPolyspacePath());
-            PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+            PolyspaceConfigUtils.checkPolyspaceBinFolderExists(bin.getPolyspacePath());
+            PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
           } catch (FormValidation val) {
             return val;
           }
@@ -367,7 +365,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           Metrics.add("-server");
           Metrics.add(metrics.getPolyspaceMetricsName());
           Metrics.add("-get-projects-list");
-          if (PolyspaceHelpers.checkPolyspaceCommand(Metrics)) {
+          if (PolyspaceConfigUtils.checkPolyspaceCommand(Metrics)) {
             return FormValidation.ok(com.mathworks.polyspace.jenkins.config.Messages.polyspaceCorrectConfig());
           } else {
             return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.polyspaceMetricsWrongConfig());
@@ -412,7 +410,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           String host = server.getPolyspaceAccessHost();
           String port = server.getPolyspaceAccessPort();
 
-          return PolyspaceHelpers.checkPolyspaceAccess(bin.getPolyspacePath(), user, password, protocol, host, port);
+          return PolyspaceConfigUtils.checkPolyspaceAccess(bin.getPolyspacePath(), user, password, protocol, host, port);
         }
     }
 }

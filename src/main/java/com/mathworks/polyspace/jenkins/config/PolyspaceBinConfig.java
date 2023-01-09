@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 The MathWorks, Inc.
+// Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,8 +20,6 @@
 // THE SOFTWARE.
 
 package com.mathworks.polyspace.jenkins.config;
-
-import com.mathworks.polyspace.jenkins.PolyspaceHelpers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.*;
@@ -58,21 +56,21 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
     public static class DescriptorImpl extends Descriptor<PolyspaceBinConfig> {
       public String getDisplayName() { return Messages.polyspaceBinConfigDisplayName(); }
       public FormValidation doCheckPolyspacePath(@QueryParameter String polyspacePath) {
-        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         String command;
         try {
-          PolyspaceHelpers.checkPolyspaceBinFolderExists(polyspacePath);
-          command = polyspacePath + File.separator + "polyspace-bug-finder" + PolyspaceHelpers.exeSuffix();
+          PolyspaceConfigUtils.checkPolyspaceBinFolderExists(polyspacePath);
+          command = polyspacePath + File.separator + "polyspace-bug-finder" + PolyspaceConfigUtils.exeSuffix();
           try {
-            PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+            PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
           } catch (FormValidation val1) {
             try {
-              command = polyspacePath + File.separator + "polyspace-bug-finder-server" + PolyspaceHelpers.exeSuffix();
-              PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+              command = polyspacePath + File.separator + "polyspace-bug-finder-server" + PolyspaceConfigUtils.exeSuffix();
+              PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
             } catch (FormValidation val2) {
               // Manage pre-19a versions of Polyspace
-              command = polyspacePath + File.separator + "polyspace-bug-finder-nodesktop" + PolyspaceHelpers.exeSuffix();
-              PolyspaceHelpers.checkPolyspaceBinCommandExists(command);
+              command = polyspacePath + File.separator + "polyspace-bug-finder-nodesktop" + PolyspaceConfigUtils.exeSuffix();
+              PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
             }
           }
         } catch (FormValidation val) {
@@ -82,7 +80,7 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
         polyspace.add(command);
         polyspace.add("-h");
         String commandString = StringUtils.join(polyspace, ' ');
-        if (PolyspaceHelpers.checkPolyspaceCommand(polyspace)) {
+        if (PolyspaceConfigUtils.checkPolyspaceCommand(polyspace)) {
           return FormValidation.ok(Messages.polyspaceCorrectConfig());
         } else {
           return FormValidation.error(Messages.polyspaceBinWrongConfig() + " '" + commandString + "'");
