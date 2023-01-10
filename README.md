@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2019 The MathWorks, Inc.
+Copyright (c) 2019-2023 The MathWorks, Inc.
 All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -44,19 +44,19 @@ Create a new project. In the **Build Environment** section of the project, choos
 1. Select the global shorthands you defined earlier for the Polyspace installation folder, Polyspace Metrics server and/or Polyspace Access server. 
 2. Select an username and encrypted password for Polyspace Access. You can also add new users with the **Add** button. The username and password gets stored in the Credentials plugin. You can edit or delete users (or add new users) directly in the Credentials plugin. 
 
-**Note**: Obtain an encrypted form of a Polyspace Access password using `polyspace-access -encrypt-password`. See [polyspace-access](https://www.mathworks.com/help/polyspace_bug_finder_server/ref/polyspaceaccess.html).
+**Note**: Obtain an encrypted form of a Polyspace Access password using `polyspace-access -encrypt-password`. See [polyspace-access](https://www.mathworks.com/help/bugfinder/ref/polyspaceaccess.html).
 
 #### Step 3: Enter Build Scripts for Polyspace Analysis
 
 In the **Build** section of the project, select **Execute shell** or **Execute Windows batch command**. Enter a script that uses the Polyspace executables:
 
-* [polyspace-bug-finder-server](https://www.mathworks.com/help/polyspace_bug_finder_server/ref/polyspacebugfinderservercommand.html) or [polyspace-code-prover-server](https://www.mathworks.com/help/polyspace_code_prover_server/ref/polyspacecodeproverservercommand.html) to run Polyspace Bug Finder or Polyspace Code Prover.
-* [polyspace-access](https://www.mathworks.com/help/polyspace_bug_finder_server/ref/polyspaceaccess.html) to upload analysis results to the Polyspace Access server.
-* [polyspace-results-repository](https://www.mathworks.com/help/bugfinder/ref/polyspaceresultsrepository.html) to upload analysis results to the Polyspace Metrics server.
+* [polyspace-bug-finder-server](https://www.mathworks.com/help/bugfinder/ref/polyspacebugfinderservercommand.html) or [polyspace-code-prover-server](https://www.mathworks.com/help/codeprover/ref/polyspacecodeproverservercommand.html) to run Polyspace Bug Finder or Polyspace Code Prover.
+* [polyspace-access](https://www.mathworks.com/help/bugfinder/ref/polyspaceaccess.html) to upload analysis results to the Polyspace Access server.
+* polyspace-results-repository to upload analysis results to the Polyspace Metrics server.
 
 For other Polyspace commands, see the documentation of
-[Polyspace Bug Finder Server](https://www.mathworks.com/help/polyspace_bug_finder_server/) or
-[Polyspace Code Prover Server](https://www.mathworks.com/help/polyspace_code_prover_server/).
+[Polyspace Bug Finder Server](https://www.mathworks.com/help/bugfinder/) or
+[Polyspace Code Prover Server](https://www.mathworks.com/help/codeprover/).
 See example scripts below.
 
 You can also use the helper utilities available with the Jenkins plugin:
