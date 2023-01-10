@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 The MathWorks, Inc.
+// Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,10 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.jenkins.test;
+package com.mathworks.polyspace.jenkins;
 
 import com.mathworks.polyspace.jenkins.config.*;
-import com.mathworks.polyspace.jenkins.*;
 import hudson.Functions;
 import hudson.model.*;
 import hudson.tasks.*;

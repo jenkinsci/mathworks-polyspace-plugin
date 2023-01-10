@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The MathWorks, Inc.
+// Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,9 +23,6 @@ package com.mathworks.polyspace.jenkins;
 
 import org.kohsuke.stapler.*;
 import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
-import hudson.util.FormValidation;
 import java.io.*;
 import java.util.*;
 
@@ -38,10 +35,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.io.IOUtils;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import javax.annotation.Nonnull;
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.activation.*;
+import jakarta.annotation.Nonnull;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+import jakarta.activation.*;
 
 /**
  * {@link Publisher} that sends Polyspace Notification in e-mail.

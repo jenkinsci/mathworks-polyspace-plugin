@@ -172,7 +172,7 @@ BUILD_STATUS=$($ps_helper -report-status Notification/Results_All.tsv 10)
 #
 NB_FINDINGS_ALL=$($ps_helper -report-count-findings Notification/Results_All.tsv)
 NB_FINDINGS_USERA=$($ps_helper -report-count-findings Notification/Results_Users_userA.tsv)
-NB_FINDINGS_USERB=$($ps_helper -report_count-findings Notification/Results_Users_userB.tsv)
+NB_FINDINGS_USERB=$($ps_helper -report-count-findings Notification/Results_Users_userB.tsv)
 NB_FINDINGS_USERC=$($ps_helper -report-count-findings Notification/Results_Users_userC.tsv)
 cat >> Notification/mailbody_manager.txt << EOF
 
