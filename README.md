@@ -26,9 +26,9 @@ THE SOFTWARE.
 The MathWorks Polyspace Plugin for Jenkins enables automated Polyspace analyses within Jenkins.
 
 
-### Getting Started 
+## Getting Started 
 
-#### Step 1: Configure Plugin
+### Step 1: Configure Plugin
 Select **Manage Jenkins** and then **Configure System**. In the **Polyspace** section, enter shorthands for:
 
 * Paths to Polyspace Server installation folder.
@@ -38,15 +38,15 @@ Select **Manage Jenkins** and then **Configure System**. In the **Polyspace** se
 You later use these shorthands in Jenkins projects.
 Also, specify the e-mail server (if not already specified) in the **E-mail Notification** section.
 
-#### Step 2: Configure Jenkins Project
+### Step 2: Configure Jenkins Project
 
 Create a new project. In the **Build Environment** section of the project, choose **Select Polyspace installation settings**. Then:
 1. Select the global shorthands you defined earlier for the Polyspace installation folder, Polyspace Metrics server and/or Polyspace Access server. 
 2. Select an username and encrypted password for Polyspace Access. You can also add new users with the **Add** button. The username and password gets stored in the Credentials plugin. You can edit or delete users (or add new users) directly in the Credentials plugin. 
 
-**Note**: Obtain an encrypted form of a Polyspace Access password using `polyspace-access -encrypt-password`. See [polyspace-access](https://www.mathworks.com/help/bugfinder/ref/polyspaceaccess.html).
+>**Note**: To generate an encrypted Polyspace Access password, use `polyspace-access -encrypt-password`. See [polyspace-access](https://www.mathworks.com/help/bugfinder/ref/polyspaceaccess.html).
 
-#### Step 3: Enter Build Scripts for Polyspace Analysis
+### Step 3: Enter Build Scripts for Polyspace Analysis
 
 In the **Build** section of the project, select **Execute shell** or **Execute Windows batch command**. Enter a script that uses the Polyspace executables:
 
@@ -67,7 +67,7 @@ You can also use the helper utilities available with the Jenkins plugin:
 
 For the syntax of these helper utilities, click the **?** icon next to the Polyspace fields in the **Build Environment** section of the project.
 
-#### Step 4: Configure Post-Analysis E-mail Notification
+### Step 4: Configure Post-Analysis E-mail Notification
 
 In the **Post-build Actions** section of the project, select **Polyspace Notification**. You can choose to do one of the following:
 * Send a common e-mail notification to one or more recipients. The e-mail can contain a summary of the analysis such as number of findings. You can also send in attachment a text file with the findings in the project (with links to individual findings in Polyspace Access).
@@ -75,7 +75,12 @@ In the **Post-build Actions** section of the project, select **Polyspace Notific
 
 For more information, click the **?** icon next to the Polyspace fields in the **Post-build Actions** section of the project.
 
-### Examples
+## Examples
 
-Script examples can be found at
-https://github.com/mathworks/mathworks-polyspace-plugin/tree/master/examples
+For examples of how to use the Jenkins Mathworks Polyspace plugin with Polyspace Access or Polyspace Metrics, see [script examples](https://github.com/mathworks/mathworks-polyspace-plugin/tree/master/examples).
+
+## Limitations
+
+If you work on multiple projects and use a controller node to assign and run jobs on agent nodes, the controller and agent nodes should run on same operating system. 
+
+The Jenkins Mathworks Polyspace plugin does not support controller and agent node configurations that run on different operating systems.
