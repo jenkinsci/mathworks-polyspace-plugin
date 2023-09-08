@@ -22,12 +22,15 @@
 package com.mathworks.polyspace.jenkins;
 
 import org.kohsuke.stapler.*;
-import hudson.Extension;
+
+import com.mathworks.polyspace.jenkins.config.PolyspaceConfigUtils;
+
 import java.io.*;
 import java.util.*;
 
 import hudson.*;
 import hudson.tasks.*;          // The mailer
+import hudson.util.FormValidation;
 import hudson.model.*;
 import jenkins.model.JenkinsLocationConfiguration;
 import jenkins.tasks.SimpleBuildStep;
@@ -258,13 +261,21 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
     public void perform(Run<?,?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException
     {
       if (sendToRecipients && (recipients != null) && !recipients.equals("")) {
-        String attachSource = "";
-        String attachName = "";
-        if ((fileToAttach != null) && !fileToAttach.equals("")) {
-          attachSource = workspace + File.separator + fileToAttach;
-          attachName = getAttachName(attachSource);
+        FormValidation fileToAttachValidation = PolyspaceConfigUtils.doCheckFilename(fileToAttach);
+        if (fileToAttachValidation == FormValidation.ok()) {
+          String attachSource = "";
+          String attachName = "";
+          if ((fileToAttach != null) && !fileToAttach.equals("")) {
+            attachSource = workspace + File.separator + fileToAttach;
+            attachName = getAttachName(attachSource);
+          }
+          sendMail(recipients, generateMailSubject(mailSubject, "", workspace, build),
+              generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
+        } else {
+          String msg = com.mathworks.polyspace.jenkins.config.Messages.errorSendingMail() + " " + fileToAttachValidation.getMessage();
+          msg += " in Attachment Filename ('" + fileToAttach + "')";
+          throw new RuntimeException(msg);
         }
-        sendMail(recipients, generateMailSubject(mailSubject, "", workspace, build), generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
       }
 
       if (sendToOwners && (queryBaseName != null) && !queryBaseName.equals("")) {
@@ -334,6 +345,10 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
+        }
+
+        public FormValidation doCheckFileToAttach(@QueryParameter String fileToAttach) {
+            return PolyspaceConfigUtils.doCheckFilename(fileToAttach);
         }
     }
 }

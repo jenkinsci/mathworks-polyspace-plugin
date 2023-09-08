@@ -166,4 +166,17 @@ public final class PolyspaceConfigUtils {
     }
     return FormValidation.error(Messages.portMustBeANumber());
   }
+
+  public static FormValidation doCheckFilename(String value) {
+    if (value.charAt(0) == '/' || value.charAt(0) == '\\') {
+      // Don't allow / or \: only allow a relative directory
+      return FormValidation.error(Messages.absoluteDirectoryForbidden());
+    } else if (value.contains("..")) {
+      // Don't allow ..: don't arbitrary target directories outside $WORKSPACE
+      return FormValidation.error(Messages.previousDirectoryForbidden());
+    } else {
+      return FormValidation.ok();
+    }
+
+  }
 }
