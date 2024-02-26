@@ -21,6 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 
+# Warning
+
+Before the fix is available, we recommend: configure user authentication on the Jenkins controller to restrict access to limited authorized users only and remove “Item/Configure” permission unless needed.
+
 # Jenkins MathWorks Polyspace Plugin
 
 The MathWorks Polyspace Plugin for Jenkins enables automated Polyspace analyses within Jenkins.
