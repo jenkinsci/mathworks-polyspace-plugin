@@ -153,7 +153,7 @@ public final class PolyspaceConfigUtils {
     return testOK;
   }
 
-  public static FormValidation doCheckProtocol( String value) {
+  public static FormValidation doCheckProtocol(String value) {
     if (!(value.equals("http") || value.equals("https"))) {
       return FormValidation.error(Messages.wrongProtocol());
     }
@@ -165,5 +165,21 @@ public final class PolyspaceConfigUtils {
       return FormValidation.ok();
     }
     return FormValidation.error(Messages.portMustBeANumber());
+  }
+
+  public static FormValidation doCheckFilename(String value) {
+    if (!value.isEmpty()) {
+      if (value.charAt(0) == '/' || value.charAt(0) == '\\') {
+        // Don't allow / or \: only allow a relative directory
+        return FormValidation.error(Messages.absoluteDirectoryForbidden());
+      } else if (value.contains("..")) {
+        // Don't allow ..: don't arbitrary target directories outside $WORKSPACE
+        return FormValidation.error(Messages.previousDirectoryForbidden());
+      } else {
+        return FormValidation.ok();
+      }
+    } else {
+      return FormValidation.ok();
+    }
   }
 }

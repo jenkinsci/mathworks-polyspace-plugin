@@ -22,12 +22,20 @@
 package com.mathworks.polyspace.jenkins;
 
 import org.kohsuke.stapler.*;
-import hudson.Extension;
+
+import com.mathworks.polyspace.jenkins.config.PolyspaceConfigUtils;
+
 import java.io.*;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.util.*;
 
 import hudson.*;
 import hudson.tasks.*;          // The mailer
+import hudson.util.FormValidation;
 import hudson.model.*;
 import jenkins.model.JenkinsLocationConfiguration;
 import jenkins.tasks.SimpleBuildStep;
@@ -115,17 +123,6 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         }
         return jlc;
     }
-
-    private String getAttachName(String attachSource)
-    {
-        if ((attachSource != null) && !attachSource.equals("")) {
-          File f = new File(attachSource);
-          if (f.exists() && !f.isDirectory()) {
-            return f.getName();
-          }
-        }
-        return "";
-      }
 
     public void sendMail( @QueryParameter String sendMailTo,
                           @QueryParameter String subject,
@@ -255,21 +252,38 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       return text;
     }
 
-    public void perform(Run<?,?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException
+    private String getFileFromAgent(FilePath workspace, String fileToAttach) throws IOException, InterruptedException
+    {
+      FilePath fileOnAgent = workspace.child(fileToAttach);
+      Path tempDir = Files.createTempDirectory(Paths.get(System.getProperty("java.io.tmpdir")), "polyspace-");
+      File fileOnController = new File(tempDir.toFile(), fileOnAgent.getName());
+      fileOnAgent.copyTo(new FilePath(fileOnController));
+      return fileOnController.toString();
+}
+
+    public void perform(Run<?,?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException
     {
       if (sendToRecipients && (recipients != null) && !recipients.equals("")) {
-        String attachSource = "";
-        String attachName = "";
-        if ((fileToAttach != null) && !fileToAttach.equals("")) {
-          attachSource = workspace + File.separator + fileToAttach;
-          attachName = getAttachName(attachSource);
+        FormValidation fileToAttachValidation = PolyspaceConfigUtils.doCheckFilename(fileToAttach);
+        if (fileToAttachValidation == FormValidation.ok()) {
+          String attachSource = "";
+          String attachName = "";
+          if ((fileToAttach != null) && !fileToAttach.equals("")) {
+            attachSource = getFileFromAgent(workspace, fileToAttach);
+            attachName = new File(attachSource).getName();
+          }
+          sendMail(recipients, generateMailSubject(mailSubject, "", workspace, build),
+              generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
+        } else {
+          String msg = com.mathworks.polyspace.jenkins.config.Messages.errorSendingMail() + " " + fileToAttachValidation.getMessage();
+          msg += " in Attachment Filename ('" + fileToAttach + "')";
+          throw new RuntimeException(msg);
         }
-        sendMail(recipients, generateMailSubject(mailSubject, "", workspace, build), generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
       }
 
       if (sendToOwners && (queryBaseName != null) && !queryBaseName.equals("")) {
-        String ownerList = workspace + File.separator + PolyspaceHelpers.getReportOwnerList(queryBaseName);
-        String listName = getAttachName(ownerList);
+        String ownerList = getFileFromAgent(workspace, PolyspaceHelpers.getReportOwnerList(queryBaseName));
+        String listName = new File(ownerList).getName();
         String to;
 
         if (!listName.equals("")) {
@@ -283,8 +297,8 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
               to = uniqueRecipients;
             }
 
-            String attachSource = workspace + File.separator + PolyspaceHelpers.getReportOwner(queryBaseName, owner);
-            String attachName = getAttachName(attachSource);
+            String attachSource = getFileFromAgent(workspace, PolyspaceHelpers.getReportOwner(queryBaseName, owner));
+            String attachName = new File(attachSource).getName();
             sendMail(to, generateMailSubject(mailSubjectBaseName, owner, workspace, build), generateMailBody(mailBodyBaseName, owner, attachName, attachSource, workspace, build), attachSource, attachName);
           }
           br.close();
@@ -334,6 +348,10 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
+        }
+
+        public FormValidation doCheckFileToAttach(@QueryParameter String fileToAttach) {
+            return PolyspaceConfigUtils.doCheckFilename(fileToAttach);
         }
     }
 }
