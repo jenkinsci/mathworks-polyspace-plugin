@@ -106,21 +106,21 @@ public final class PolyspaceConfigUtils {
       final BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(p.getInputStream(), Mailer.descriptor().getCharset()));
       final BufferedReader errorBuffer = new BufferedReader(new InputStreamReader(p.getErrorStream(), Mailer.descriptor().getCharset()));
       boolean processRunning = true;
-      String tempo;
+      // String tempo;
 
       while (processRunning)
       {
         // While process writes on the standard output, read data
         while (inputBuffer.ready())
         {
-          tempo = inputBuffer.readLine();
+          /*tempo = */inputBuffer.readLine();
           // For debug only
           // if (tempo != null) System.out.println(tempo);
         }
         // While process writes on the standard error, read data
         while (errorBuffer.ready())
         {
-          tempo = errorBuffer.readLine();
+          /*tempo = */errorBuffer.readLine();
           // For debug only
           // if (tempo != null) System.out.println("Error stream: "+tempo);
         }
