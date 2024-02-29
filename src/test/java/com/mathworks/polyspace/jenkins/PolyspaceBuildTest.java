@@ -325,4 +325,26 @@ public class PolyspaceBuildTest {
     assertEquals(FormValidation.Kind.ERROR, path_bin_wrong_config.kind);
     assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinWrongConfig() + " &#039;" + FAKE_POLYSPACE + " -h&#039;", path_bin_wrong_config.renderHtml());
   }
+
+  // Check test functions for Post Build Actions
+  @Test
+  public void testCheckPolyspacePostBuildActions() throws Exception {
+    PolyspacePostBuildActions.DescriptorImpl desc_pba = new PolyspacePostBuildActions.DescriptorImpl();
+
+    FormValidation absoluteDirectoryForbidden = desc_pba.doCheckFileToAttach("/etc/passwd");
+    assertEquals(FormValidation.Kind.ERROR, absoluteDirectoryForbidden.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.absoluteDirectoryForbidden(), absoluteDirectoryForbidden.renderHtml());
+
+    FormValidation previousDirectoryForbidden1 = desc_pba.doCheckFileToAttach("sub1/sub2/../../../../../etc/passwd");
+    assertEquals(FormValidation.Kind.ERROR, previousDirectoryForbidden1.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.previousDirectoryForbidden(), previousDirectoryForbidden1.renderHtml());
+
+    FormValidation previousDirectoryForbidden2 = desc_pba.doCheckFileToAttach("../../etc/passwd");
+    assertEquals(FormValidation.Kind.ERROR, previousDirectoryForbidden2.kind);
+    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.previousDirectoryForbidden(), previousDirectoryForbidden2.renderHtml());
+
+    FormValidation okFormValidation = desc_pba.doCheckFileToAttach("polyspace/report.txt");
+    assertEquals(FormValidation.Kind.OK, okFormValidation.kind);
+    assertEquals("<div/>", okFormValidation.renderHtml());
+  }
 }
