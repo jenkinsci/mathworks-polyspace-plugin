@@ -1,0 +1,10 @@
+Connecting to https://gnb-psaccess-dev:9443
+Connecting as batserve
+Zipping results
+Upload results in /public/sbobin/ASmallTests-45
+Upload with IMPORT_ID 1709100926122_0642755d-c56d-4350-b194-ec12fa8d07d3.zip
+Upload successful for RUN_ID 17263 and PROJECT_ID 4928
+You can now view the results via your web browser at
+ACCESS_URL https://gnb-psaccess-dev:9443/metrics/index.html?a=metrics&p=4928&r=17263
+Upload completed for 1 / 1 runs
+Command Completed

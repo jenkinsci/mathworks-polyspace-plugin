@@ -1,0 +1,16 @@
+Connecting to https://gnb-psaccess-dev:9443
+Connecting as batserve
+Upload /var/local/polyspace/plugin_common_services/results in /MW/Polyspace/Engines/Bpolyspace/plugin_common_services (Bug Finder)
+Upload with IMPORT_ID 1696005353005_23bc56dd-2e40-4c73-9284-a0f593836026.zip
+Uploading  Progress: 0% . In Queue. Upload will begin once other upload(s) complete...
+Uploading RunId: 14141 Progress: 30%
+Upload failed for RUN_ID 14141 and PROJECT_ID 3704
+Upload completed for 0 / 1 runs
+Error: Upload to Polyspace Access failed with message: 'In Corrupted Folder'.
+Try one of the following:
+* Check that you are not uploading results to a project that contains a different type of results. For instance, you are uploading Bug Finder results to a folder that contains Code Prover results.
+* Check MathWorks Bug Reports or MATLAB Answers for a similar issues and possible workarounds.
+* Generate debugging logs and other supporting files by following the instruction on this page:
+https://www.mathworks.com/matlabcentral/answers/852070-how-can-i-get-debug-information-for-polyspace-access
+Then, contact Technical Support (www.mathworks.com/support/contact_us) and provide the generated files to help diagnose the issue.
+Try 'polyspace-access -h' for more information

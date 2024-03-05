@@ -23,10 +23,13 @@ package com.mathworks.polyspace.jenkins;
 
 import org.kohsuke.stapler.*;
 
+import com.mathworks.polyspace.jenkins.config.Messages;
 import com.mathworks.polyspace.jenkins.config.PolyspaceConfigUtils;
+import com.mathworks.polyspace.jenkins.utils.PolyspaceHelpersUtils;
+import com.mathworks.polyspace.jenkins.utils.PolyspaceUtils;
 
 import java.io.*;
-
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +43,7 @@ import hudson.model.*;
 import jenkins.model.JenkinsLocationConfiguration;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.io.IOUtils;
+// import org.apache.commons.io.IOUtils;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import jakarta.annotation.Nonnull;
@@ -152,7 +155,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         // create the message body, with the text followed by the file to attach if any
         Multipart multipart = new MimeMultipart();
 
-        if (!attachName.equals("")) {
+        if (!attachName.isEmpty()) {
           File file = new File(attachSource);
           if (file.length()  > 10*1024*1024) {
             // size of the attachement is too large
@@ -180,21 +183,23 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       }
     }
 
+    // Move to utils
     private String getFilenameOwner(final String name, final String owner, FilePath workspace) throws java.io.IOException
     {
       String fileName = workspace + File.separator;
-      if (owner.equals("")) {
+      if (owner.isEmpty()) {
         fileName += name;
       } else {
-        fileName += name + PolyspaceHelpers.getReportOwner(name, owner);
+        fileName += name + PolyspaceHelpersUtils.getReportOwner(Paths.get(name), owner);
       }
-      InputStream inputStream = new FileInputStream(fileName);
-      return IOUtils.toString(inputStream);
+      // InputStream inputStream = new FileInputStream(fileName);
+      // return IOUtils.toString(inputStream);
+      return new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
     }
 
     private String generateMailBody(final String body, final String owner, final String attachName, final String attachSource, FilePath workspace, Run<?,?> build) {
       try {
-        if ((body != null) && !body.equals("")) {
+        if ((body != null) && !body.isEmpty()) {
           return getFilenameOwner(body, owner, workspace);
         }
       } catch (java.io.IOException e) {
@@ -202,21 +207,21 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       }
 
       String text = "";
-      if (owner.equals("")) {
+      if (owner.isEmpty()) {
         text += "General email sent by Polyspace Jenkins Plugin\n\n";
       } else {
         text += "Dear " + owner + ",\nPlease find attached the findings you own.\n\n";
       }
-      if (!attachName.equals("")) {
+      if (!attachName.isEmpty()) {
         text += "Please check attached file " + attachName + "\n";
         try {
-          text += "It contains " + PolyspaceHelpers.reportCountFindings(attachSource) + " finding(s)\n";
+          text += "It contains " + PolyspaceHelpersUtils.getCountFindings(Paths.get(attachSource)) + " finding(s)\n";
         } catch (RuntimeException e) {
           text += "Cannot count nb of findings";
         } catch (Exception e) {
           text += "Cannot count nb of findings";
         }
-      } else if (!attachSource.equals("")) {
+      } else if (!attachSource.isEmpty()) {
         text += "Warning: Could not attach " + attachSource + "\n";
       }
       text += "\n";
@@ -225,7 +230,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       if (!PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL().equals("POLYSPACE_ACCESS_URL_IS_UNSET")) {
         text += "- Polyspace Access " + PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL() + "\n";
       }
-      if (!PolyspaceBuildWrapper.descriptor().getPolyspaceMetricsURL().equals("")) {
+      if (!PolyspaceBuildWrapper.descriptor().getPolyspaceMetricsURL().isEmpty()) {
         text += "- Polyspace Metrics " + PolyspaceBuildWrapper.descriptor().getPolyspaceMetricsURL() + "\n";
       }
       return text;
@@ -233,7 +238,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
     private String generateMailSubject(final String subject, final String owner, FilePath workspace, Run<?,?> build) {
       try {
-        if ((subject != null) && !subject.equals("")) {
+        if ((subject != null) && !subject.isEmpty()) {
           return getFilenameOwner(subject, owner, workspace);
         }
       } catch (java.io.IOException e) {
@@ -244,7 +249,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       text += "Polyspace Jenkins Plugin";
       text += " - " + build.getFullDisplayName();
       text += " - " + build.getResult();
-      if (owner.equals("")) {
+      if (owner.isEmpty()) {
         text += " - General Email";
       } else {
         text += " - Email to Finding Owners";
@@ -255,61 +260,90 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
     private String getFileFromAgent(FilePath workspace, String fileToAttach) throws IOException, InterruptedException
     {
       FilePath fileOnAgent = workspace.child(fileToAttach);
-      Path tempDir = Files.createTempDirectory(Paths.get(System.getProperty("java.io.tmpdir")), "polyspace-");
-      File fileOnController = new File(tempDir.toFile(), fileOnAgent.getName());
-      fileOnAgent.copyTo(new FilePath(fileOnController));
-      return fileOnController.toString();
-}
+      if (fileOnAgent.exists())
+      {
+        Path tempDir = Files.createTempDirectory(Paths.get(System.getProperty("java.io.tmpdir")), "polyspace-");
+        File fileOnController = new File(tempDir.toFile(), fileOnAgent.getName());
+        fileOnAgent.copyTo(new FilePath(fileOnController));
+        return fileOnController.toString();
+      } else {
+        return "";
+      }
+    }
+
+    private void sendToRecipients(final Run<?,?> build, final FilePath workspace) throws IOException, InterruptedException
+    {
+      FormValidation fileToAttachValidation = PolyspaceConfigUtils.doCheckFilename(fileToAttach);
+
+      if (fileToAttachValidation == FormValidation.ok())
+      {
+        String attachSource = "";
+        String attachName = "";
+
+        if ((fileToAttach != null) && !fileToAttach.isEmpty())
+        {
+          attachSource = getFileFromAgent(workspace, fileToAttach);
+          attachName = new File(attachSource).getName();
+        }
+
+        final String subject = generateMailSubject(mailSubject, "", workspace, build);
+        final String body = generateMailBody(mailBody, "", attachName, attachSource, workspace, build);
+
+        sendMail(recipients, subject, body, attachSource, attachName);
+      }
+      else
+      {
+        String msg = Messages.errorSendingMail() + " " + fileToAttachValidation.getMessage();
+        msg += " in Attachment Filename ('" + fileToAttach + "')";
+        throw new RuntimeException(msg);
+      }
+    }
+
+    private void sendToOwners(final Run<?,?> build, final FilePath workspace) throws IOException, InterruptedException
+    {
+      String ownerList = getFileFromAgent(workspace, PolyspaceHelpersUtils.getReportOwnerList(Paths.get(queryBaseName)).toString());
+
+      if (!ownerList.isEmpty())
+      {
+        final String ownerListContent = PolyspaceUtils.getFileContent(Paths.get(ownerList));
+
+        try (final Scanner ownerListScanner = new Scanner(ownerListContent))
+        {
+          while (ownerListScanner.hasNextLine())
+          {
+            final String owner = ownerListScanner.nextLine();
+            final String recipient = uniqueRecipients.isEmpty() ? owner : uniqueRecipients;
+  
+            final String attachSource = getFileFromAgent(workspace, PolyspaceHelpersUtils.getReportOwner(Paths.get(queryBaseName), owner).toString());
+            final String attachName = new File(attachSource).getName();
+
+            final String subject = generateMailSubject(mailSubjectBaseName, owner, workspace, build);
+            final String body = generateMailBody(mailBodyBaseName, owner, attachName, attachSource, workspace, build);
+
+            sendMail(recipient, subject, body, attachSource, attachName);
+          }
+        }
+      }
+    }
 
     public void perform(Run<?,?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException
     {
-      if (sendToRecipients && (recipients != null) && !recipients.equals("")) {
-        FormValidation fileToAttachValidation = PolyspaceConfigUtils.doCheckFilename(fileToAttach);
-        if (fileToAttachValidation == FormValidation.ok()) {
-          String attachSource = "";
-          String attachName = "";
-          if ((fileToAttach != null) && !fileToAttach.equals("")) {
-            attachSource = getFileFromAgent(workspace, fileToAttach);
-            attachName = new File(attachSource).getName();
-          }
-          sendMail(recipients, generateMailSubject(mailSubject, "", workspace, build),
-              generateMailBody(mailBody, "", attachName, attachSource, workspace, build), attachSource, attachName);
-        } else {
-          String msg = com.mathworks.polyspace.jenkins.config.Messages.errorSendingMail() + " " + fileToAttachValidation.getMessage();
-          msg += " in Attachment Filename ('" + fileToAttach + "')";
-          throw new RuntimeException(msg);
-        }
+      if (sendToRecipients && (recipients != null) && !recipients.isEmpty())
+      {
+        sendToRecipients(build, workspace);
       }
 
-      if (sendToOwners && (queryBaseName != null) && !queryBaseName.equals("")) {
-        String ownerList = getFileFromAgent(workspace, PolyspaceHelpers.getReportOwnerList(queryBaseName));
-        String listName = new File(ownerList).getName();
-        String to;
-
-        if (!listName.equals("")) {
-          InputStream inputStream = new FileInputStream(ownerList);
-          Reader fr = new InputStreamReader(inputStream, Mailer.descriptor().getCharset());
-          BufferedReader br = new BufferedReader(fr);
-          for (String owner; (owner = br.readLine()) != null; ) {
-            if (uniqueRecipients.equals("")) {
-              to = owner;
-            } else {
-              to = uniqueRecipients;
-            }
-
-            String attachSource = getFileFromAgent(workspace, PolyspaceHelpers.getReportOwner(queryBaseName, owner));
-            String attachName = new File(attachSource).getName();
-            sendMail(to, generateMailSubject(mailSubjectBaseName, owner, workspace, build), generateMailBody(mailBodyBaseName, owner, attachName, attachSource, workspace, build), attachSource, attachName);
-          }
-          br.close();
-        }
+      if (sendToOwners && (queryBaseName != null) && !queryBaseName.isEmpty())
+      {
+        sendToOwners(build, workspace);
       }
     }
 
     /**
      * This class does explicit check pointing.
      */
-    public BuildStepMonitor getRequiredMonitorService() {
+    public BuildStepMonitor getRequiredMonitorService()
+    {
         return BuildStepMonitor.NONE;
     }
 

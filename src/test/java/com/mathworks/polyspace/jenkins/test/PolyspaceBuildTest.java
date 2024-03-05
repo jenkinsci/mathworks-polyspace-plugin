@@ -19,8 +19,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.jenkins;
+package com.mathworks.polyspace.jenkins.test;
 
+import com.mathworks.polyspace.jenkins.PolyspaceBuildWrapper;
+import com.mathworks.polyspace.jenkins.PolyspacePostBuildActions;
+// import com.mathworks.polyspace.jenkins.PolyspacePostBuildActions.DescriptorImpl;
 import com.mathworks.polyspace.jenkins.config.*;
 import hudson.Functions;
 import hudson.model.*;
