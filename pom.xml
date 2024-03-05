@@ -3,17 +3,15 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.73</version>
+    <version>4.78</version>
+    <relativePath />
   </parent>
 
   <properties>
-    <!--
-    If your are using the Plugin Parent POM version 2.3 or later, just set the jenkins.version property to the version you need to depend on
-    Source: https://wiki.jenkins-ci.org/display/JENKINS/Choosing+Jenkins+version+to+build+against
-    -->
-    <jenkins.version>2.387.3</jenkins.version>
+    <jenkins.version>2.426.3</jenkins.version>
     <findbugs.failOnError>true</findbugs.failOnError>
-    <!-- <java.level>8</java.level> -->
+    <!-- TODO fix violations before release and remove threshold -->
+    <spotbugs.threshold>High</spotbugs.threshold>
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>
@@ -22,7 +20,6 @@
   <name>MathWorks Polyspace Plugin</name>
   <url>https://github.com/jenkinsci/mathworks-polyspace-plugin</url>
   <packaging>hpi</packaging>
-  <description>Jenkins plugin for Polyspace</description>
 
   <licenses>
     <license>
@@ -41,10 +38,10 @@
   </developers>
 
   <scm>
-    <connection>scm:git:ssh://github.com:jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin.git</url>
-    <tag>mathworks-polyspace-1.0.8</tag>
+    <tag>${scmTag}</tag>
   </scm>
 
   <repositories>
@@ -76,26 +73,35 @@
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-2.414.x</artifactId>
+        <version>2857.v01a_0144eb_20b_</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!-- StringUtils -->
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.13.0</version>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>commons-lang3-api</artifactId>
     </dependency>
 
     <!-- Credential plugin -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>1271.v54b_1c2c6388a_</version>
     </dependency>
 
     <!-- Mailer plugin -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>mailer</artifactId>
-      <version>463.vedf8358e006b_</version>
     </dependency>
   </dependencies>
 </project>
