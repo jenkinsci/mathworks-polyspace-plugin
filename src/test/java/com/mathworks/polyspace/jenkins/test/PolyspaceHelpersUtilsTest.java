@@ -216,7 +216,7 @@ public class PolyspaceHelpersUtilsTest {
     Exception exception = assertThrows(RuntimeException.class, () -> {
       PolyspaceHelpersUtils.reportFilter(results, filteredReport, owner, new String[] { "header", "value"});
     });
-    assertEquals("Cannot create filtered report as the directory '/local-ssd/sbobin/jenkins-plugin/DEV/mathworks-polyspace-plugin/src/test/data/filteredReport_owner'", exception.getMessage());
+    assertEquals("Cannot create filtered report as the directory '" + cwd + "/src/test/data/filteredReport_owner'", exception.getMessage());
 
     Files.deleteIfExists(filteredReport_owner);
   }
@@ -235,7 +235,7 @@ public class PolyspaceHelpersUtilsTest {
     Exception exception = assertThrows(RuntimeException.class, () -> {
       PolyspaceHelpersUtils.reportFilter(results,filteredReport, owner, new String[] { "header", "value"});
     });
-    assertEquals("Cannot create owner list as the directory '/local-ssd/sbobin/jenkins-plugin/DEV/mathworks-polyspace-plugin/src/test/data/filteredReport.owners.list'", exception.getMessage());
+    assertEquals("Cannot create owner list as the directory '" + cwd + "/src/test/data/filteredReport.owners.list'", exception.getMessage());
 
     Files.deleteIfExists(ownerList);
   }
@@ -270,17 +270,17 @@ public class PolyspaceHelpersUtilsTest {
     exception = assertThrows(RuntimeException.class, () -> {
       PolyspaceHelpersUtils.getAccessResultRunId(accessUploadFailureOutput);
     });
-    assertEquals("Cannot find runId in '/local-ssd/sbobin/jenkins-plugin/DEV/mathworks-polyspace-plugin/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
+    assertEquals("Cannot find runId in '" + cwd + "/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
 
     exception = assertThrows(RuntimeException.class, () -> {
       PolyspaceHelpersUtils.getAccessResultProjectId(accessUploadFailureOutput);
     });
-    assertEquals("Cannot find projectId in '/local-ssd/sbobin/jenkins-plugin/DEV/mathworks-polyspace-plugin/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
+    assertEquals("Cannot find projectId in '" + cwd + "/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
 
     exception = assertThrows(RuntimeException.class, () -> {
       PolyspaceHelpersUtils.getAccessResultUrl(accessUploadFailureOutput, "ACCESS_URL");
     });
-    assertEquals("Cannot find project url from '/local-ssd/sbobin/jenkins-plugin/DEV/mathworks-polyspace-plugin/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
+    assertEquals("Cannot find project url from '" + cwd + "/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
   }
 
 }
