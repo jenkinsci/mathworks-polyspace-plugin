@@ -39,7 +39,7 @@ public class PolyspaceHelpersUtils {
    * @param ownerList - The owner list file
    * @param owner - An owner
    * @return {@code true} if {@code owner} is in {@code ownerList} - {@code false} otherwise
-   * @throws IOException
+   * @throws IOException Error while accessing {@code ownerList}
    */
   public static Boolean isOwnerInFile(final Path ownerList, final String owner) throws IOException
   {
@@ -56,7 +56,7 @@ public class PolyspaceHelpersUtils {
    * Append {@code line} with a new line in {@code file}
    * @param file - Path to a file
    * @param line - Line string to add
-   * @throws IOException
+   * @throws IOException Error while accessing {@code file}
    */
   public static void appendLineInFile(final Path file, final String line) throws IOException
   {
@@ -69,9 +69,9 @@ public class PolyspaceHelpersUtils {
   /**
    * Build the report-owner filename:
    * <ul>
-   *    <li>Owner is empty => "{@code report}" unmodified</li>
-   *    <li>Report without extension => "{@code report}_{@code owner}"</li>
-   *    <li>Report with extension => "{@code report}_{@code owner}.ext"</li>
+   *    <li>Owner is empty: "{@code report}" unmodified</li>
+   *    <li>Report without extension: "{@code report}_{@code owner}"</li>
+   *    <li>Report with extension: "{@code report}_{@code owner}.ext"</li>
    * </ul>
    * @param report - Path to the report
    * @param owner - An owner
@@ -123,10 +123,9 @@ public class PolyspaceHelpersUtils {
    * @param filteredReport - Path to the new filtered report - it may already exist to allow to append multiple filtered reports
    * @param owner - The owner for the filtered report - must be a username matching an email as it will also be used to send the email notification
    * @param filters - An array of strings containing one or more "key" "value" pairs
-   * @throws IOException
-   * @throws RuntimeException
+   * @throws IOException Error while accessing {@code originalReport} or {@code filteredReport}
    */
-  public static void reportFilter(final Path originalReport, final Path filteredReport, final String owner, final String[] filters) throws IOException, RuntimeException {
+  public static void reportFilter(final Path originalReport, final Path filteredReport, final String owner, final String[] filters) throws IOException {
     int n = 0;
 
     // Check original report
@@ -209,8 +208,8 @@ public class PolyspaceHelpersUtils {
 
   /**
    * @param report - Path to the report
-   * @return - Number of findings in {@code report} => number of lines - 1 (title line)
-   * @throws IOException
+   * @return - Number of findings in {@code report}: number of lines - 1 (title line)
+   * @throws IOException Error while accessing {@code report}
    */
   public static long getCountFindings(final Path report) throws IOException {
     return PolyspaceUtils.getFileLineCount(report) - 1;
@@ -220,8 +219,8 @@ public class PolyspaceHelpersUtils {
    * 
    * @param report - Path to the report
    * @param max - Thereshold for status
-   * @return - Job status string: SUCCESS if num findings < {@code max}, UNSTABLE otherwise
-   * @throws IOException
+   * @return - Job status string: SUCCESS if num findings smaller than {@code max}, UNSTABLE otherwise
+   * @throws IOException Error while accessing {@code report}
    */
   public static String getReportStatus(final Path report, final long max) throws IOException
   {
@@ -250,7 +249,7 @@ public class PolyspaceHelpersUtils {
   /**
    * @param output - Captured content of upload command stdout
    * @return - RunId and ProjectId for result found in {@code output}
-   * @throws IOException
+   * @throws IOException Error while accessing {@code output}
    */
   private static AccessUploadResult getAccessUploadResult(Path output) throws IOException
   {
@@ -272,7 +271,7 @@ public class PolyspaceHelpersUtils {
   /**
    * @param output - Path to the report
    * @return Result runId
-   * @throws IOException
+   * @throws IOException Error while accessing {@code output}
    */
   public static String getAccessResultRunId(Path output) throws IOException
   {
@@ -287,7 +286,7 @@ public class PolyspaceHelpersUtils {
   /**
    * @param output - Path to the report
    * @return Result projectId
-   * @throws IOException
+   * @throws IOException Error while accessing {@code output}
    */
   public static String getAccessResultProjectId(Path output) throws IOException
   {
@@ -303,7 +302,7 @@ public class PolyspaceHelpersUtils {
    * @param output - Path to the report
    * @param accessURL - Root Access server URL
    * @return Results URL
-   * @throws IOException
+   * @throws IOException Error while accessing {@code output}
    */
   public static String getAccessResultUrl(Path output, String accessURL) throws IOException
   {

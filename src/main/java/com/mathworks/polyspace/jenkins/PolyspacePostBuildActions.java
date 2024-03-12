@@ -356,7 +356,6 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
      * @return {@link InternetAddress} for the specified String
      * @throws AddressException Malformed address
      * @throws UnsupportedEncodingException Unsupported encoding
-     * @since
      */
     public static @Nonnull InternetAddress stringToAddress(@Nonnull String strAddress,
             @Nonnull String charset) throws AddressException, UnsupportedEncodingException {
