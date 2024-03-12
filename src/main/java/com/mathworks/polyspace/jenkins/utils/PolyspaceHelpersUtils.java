@@ -220,7 +220,7 @@ public class PolyspaceHelpersUtils {
    * 
    * @param report - Path to the report
    * @param max - Thereshold for status
-   * @return - Job status string: SUCCESS if num findings < {@code max}, UNSTABLE otherwise
+   * @return - Job status string: SUCCESS if num findings smaller than {@code max}, UNSTABLE otherwise
    * @throws IOException
    */
   public static String getReportStatus(final Path report, final long max) throws IOException
