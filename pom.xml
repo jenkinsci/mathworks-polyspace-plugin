@@ -10,8 +10,6 @@
   <properties>
     <jenkins.version>2.426.3</jenkins.version>
     <findbugs.failOnError>true</findbugs.failOnError>
-    <!-- TODO fix violations before release and remove threshold -->
-    <spotbugs.threshold>High</spotbugs.threshold>
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>

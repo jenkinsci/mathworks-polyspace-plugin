@@ -55,16 +55,16 @@ import jakarta.activation.*;
  * {@link Publisher} that sends Polyspace Notification in e-mail.
  */
 public class PolyspacePostBuildActions extends Notifier implements SimpleBuildStep {
-    public Boolean sendToRecipients;    /** True if we want to send an email to a list of recipients */
-    public String recipients;           /** Whitespace-separated list of e-mail addresses that represent recipients */
-    public String fileToAttach;         /** File to attach */
-    public String mailSubject;          /** File containing the mail subject. "" if generic subject is to be applied */
-    public String mailBody;             /** File containing the mail body. "" if generic body is to be applied */
-    public Boolean sendToOwners;        /** True if we want to send an email to all owners */
-    public String queryBaseName;        /** query base name */
-    public String mailSubjectBaseName;  /** base name of the file containing the mail subject. "" if generic subject is to be applied. file for a user is mailSubjectBaseName _ user . ext */
-    public String mailBodyBaseName;     /** base name of the file containing the mail body. "" if generic body is to be applied. file for a user is mailBodyBaseName _ user . ext */
-    public String uniqueRecipients;     /** Unique recipient that receives all emails */
+    private Boolean sendToRecipients;    /** True if we want to send an email to a list of recipients */
+    private String recipients;           /** Whitespace-separated list of e-mail addresses that represent recipients */
+    private String fileToAttach;         /** File to attach */
+    private String mailSubject;          /** File containing the mail subject. "" if generic subject is to be applied */
+    private String mailBody;             /** File containing the mail body. "" if generic body is to be applied */
+    private Boolean sendToOwners;        /** True if we want to send an email to all owners */
+    private String queryBaseName;        /** query base name */
+    private String mailSubjectBaseName;  /** base name of the file containing the mail subject. "" if generic subject is to be applied. file for a user is mailSubjectBaseName _ user . ext */
+    private String mailBodyBaseName;     /** base name of the file containing the mail body. "" if generic body is to be applied. file for a user is mailBodyBaseName _ user . ext */
+    private String uniqueRecipients;     /** Unique recipient that receives all emails */
 
     @DataBoundConstructor
     public PolyspacePostBuildActions() { }
