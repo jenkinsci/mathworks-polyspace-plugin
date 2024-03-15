@@ -80,3 +80,7 @@ For more information, click the **?** icon next to the Polyspace fields in the *
 
 Script examples can be found at
 https://github.com/mathworks/mathworks-polyspace-plugin/tree/master/examples.
+
+## Security Consideration
+
+Best practice is to configure user authentication on the Jenkins controller to restrict access to limited authorized users only. See Jenkins documentation [Secure the controller](https://www.jenkins.io/doc/book/using/best-practices/#secure-the-controller) and [Securing Jenkins](https://www.jenkins.io/doc/book/security/securing-jenkins/).
