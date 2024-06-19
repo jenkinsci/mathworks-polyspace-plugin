@@ -8,7 +8,7 @@
   </parent>
 
   <properties>
-    <revision>1.0.10</revision>
+    <revision>1.0.11</revision>
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/mathworks-polyspace-plugin</gitHubRepo>
     <jenkins.version>2.426.3</jenkins.version>
