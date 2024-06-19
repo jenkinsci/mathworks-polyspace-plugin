@@ -8,12 +8,15 @@
   </parent>
 
   <properties>
+    <revision>1.0.10</revision>
+    <changelist>-SNAPSHOT</changelist>
+    <gitHubRepo>jenkinsci/mathworks-polyspace-plugin</gitHubRepo>
     <jenkins.version>2.426.3</jenkins.version>
     <findbugs.failOnError>true</findbugs.failOnError>
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>
-  <version>1.0.10-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <groupId>io.jenkins.plugins</groupId>
   <name>MathWorks Polyspace Plugin</name>
   <url>https://github.com/jenkinsci/mathworks-polyspace-plugin</url>
@@ -36,9 +39,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin.git</url>
+    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <url>https://github.com/${gitHubRepo}.git</url>
     <tag>${scmTag}</tag>
   </scm>
 
