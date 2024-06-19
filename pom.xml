@@ -3,17 +3,20 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.78</version>
+    <version>4.83</version>
     <relativePath />
   </parent>
 
   <properties>
+    <revision>1.0.11</revision>
+    <changelist>-SNAPSHOT</changelist>
+    <gitHubRepo>jenkinsci/mathworks-polyspace-plugin</gitHubRepo>
     <jenkins.version>2.426.3</jenkins.version>
     <findbugs.failOnError>true</findbugs.failOnError>
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>
-  <version>1.0.10-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <groupId>io.jenkins.plugins</groupId>
   <name>MathWorks Polyspace Plugin</name>
   <url>https://github.com/jenkinsci/mathworks-polyspace-plugin</url>
@@ -36,9 +39,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin.git</url>
+    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <url>https://github.com/${gitHubRepo}.git</url>
     <tag>${scmTag}</tag>
   </scm>
 
@@ -55,21 +58,6 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <build>
-    <plugins>
-      <!-- require org.apache.maven.plugins:maven-clean-plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>InjectedTest.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <dependencyManagement>
     <dependencies>
