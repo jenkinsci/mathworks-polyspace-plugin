@@ -23,7 +23,7 @@
 
 # Jenkins MathWorks Polyspace Plugin
 
-[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=mathworks/mathworks-polyspace-plugin)
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=mathworks/polyspace-jenkins-plugin)
 
 The MathWorks Polyspace Plugin for Jenkins enables automated Polyspace analyses within Jenkins.
 
@@ -79,7 +79,7 @@ For more information, click the **?** icon next to the Polyspace fields in the *
 ## Examples
 
 Script examples can be found at
-https://github.com/mathworks/mathworks-polyspace-plugin/tree/master/examples.
+https://github.com/mathworks/polyspace-jenkins-plugin/tree/master/examples.
 
 ## Security Consideration
 
