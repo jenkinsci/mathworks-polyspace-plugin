@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The MathWorks, Inc.
+// Copyright (c) 2024-2025 The MathWorks, Inc.
 // All Rights Reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

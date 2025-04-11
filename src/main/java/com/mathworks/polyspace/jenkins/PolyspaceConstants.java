@@ -1,16 +1,16 @@
-// Copyright (c) 2019-2020 The MathWorks, Inc.
+// Copyright (c) 2019-2025 The MathWorks, Inc.
 // All Rights Reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,10 +31,4 @@ public class PolyspaceConstants {
     public static final String POLYSPACE_ACCESS_HOST      = "POLYSPACE_ACCESS_HOST";        // host of Access
     public static final String POLYSPACE_ACCESS_PORT      = "POLYSPACE_ACCESS_PORT";        // port of Access
     public static final String POLYSPACE_ACCESS_URL       = "POLYSPACE_ACCESS_URL";         // <protocol>://<host>:<port>
-
-    // Metrics-oriented variables
-    public static final String PS_HELPER_METRICS_UPLOAD   = "ps_helper_metrics_upload";     // helper to upload on metrics
-    public static final String POLYSPACE_METRICS_HOST     = "POLYSPACE_METRICS_HOST";       // hostname of Metrics
-    public static final String POLYSPACE_METRICS_PORT     = "POLYSPACE_METRICS_PORT";       // port of Metrics
-    public static final String POLYSPACE_METRICS_URL      = "POLYSPACE_METRICS_URL";        // <host>. No protocol nor port as the port is the one for upload, not for viewing
 }

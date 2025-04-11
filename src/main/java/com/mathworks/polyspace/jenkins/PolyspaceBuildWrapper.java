@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 The MathWorks, Inc.
+// Copyright (c) 2019-2025 The MathWorks, Inc.
 // All Rights Reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -47,7 +47,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     private String serverConfig = null;
     private String polyspaceAccessCredentialId = null;
     private String binConfig = null;
-    private String metricsConfig = null;
 
     @DataBoundConstructor
     public PolyspaceBuildWrapper() {
@@ -66,11 +65,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     @DataBoundSetter
     public void setBinConfig(String binConfig) {
       this.binConfig = binConfig;
-    }
-
-    @DataBoundSetter
-    public void setMetricsConfig(String metricsConfig) {
-      this.metricsConfig = metricsConfig;
     }
 
     public String getValue(String value, String default_value) {
@@ -111,29 +105,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
       }
     }
 
-    // Update context related to Metrics:
-    // - Environment variables
-    // - Metrics URL
-    private void update_metrics(Context context, final PolyspaceMetricsConfig metrics) {
-      if ((metrics == null) || (metrics.getPolyspaceMetricsName().equals(getUnsetValue()))) {
-        context.env(PolyspaceConstants.PS_HELPER_METRICS_UPLOAD, PolyspaceConstants.PS_HELPER_METRICS_UPLOAD + " IS UNSET");
-        context.env(PolyspaceConstants.POLYSPACE_METRICS_HOST, PolyspaceConstants.POLYSPACE_METRICS_HOST + " IS UNSET");
-        context.env(PolyspaceConstants.POLYSPACE_METRICS_PORT, PolyspaceConstants.POLYSPACE_METRICS_PORT + " IS UNSET");
-        context.env(PolyspaceConstants.POLYSPACE_METRICS_URL, PolyspaceConstants.POLYSPACE_METRICS_URL + " IS UNSET");
-        descriptor().setPolyspaceMetricsURL("");
-      } else {
-        String host = getValue(metrics.getPolyspaceMetricsHost(), "localhost");
-        String port = getValue(metrics.getPolyspaceMetricsPort(), "12427");
-        String url = host;      // only the host as the port is used for upload only, not for webui
-
-        context.env(PolyspaceConstants.PS_HELPER_METRICS_UPLOAD, "polyspace-results-repository -f -upload -server " + host + ":" + port);
-        context.env(PolyspaceConstants.POLYSPACE_METRICS_HOST, host);
-        context.env(PolyspaceConstants.POLYSPACE_METRICS_PORT, port);
-        context.env(PolyspaceConstants.POLYSPACE_METRICS_URL, url);
-        descriptor().setPolyspaceMetricsURL(url);
-      }
-    }
-
     // Update global Context
     // - PATH
     // - ps_helper
@@ -166,9 +137,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
       // update context and variables associated with Polyspace Access
       update_access(context, getDescriptor().getServerConfig(serverConfig), getPolyspaceAccessUser(getPolyspaceAccessCredentialId()), getPolyspaceAccessPassword(getPolyspaceAccessCredentialId()));
 
-      // update context and variables associated with metrics
-      update_metrics(context, getDescriptor().getMetricsConfig(metricsConfig));
-
       // update the path and general helpers
       update_global(context, getDescriptor().getBinConfig(binConfig), initialEnvironment);
     }
@@ -176,7 +144,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     public String getServerConfig() { return serverConfig; }
     public String getPolyspaceAccessCredentialId() { return polyspaceAccessCredentialId; }
     public String getBinConfig() { return binConfig; }
-    public String getMetricsConfig() { return metricsConfig; }
 
     public final static String getUnsetValue() { return "<unset>"; }
 
@@ -225,17 +192,12 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     public static final class DescriptorImpl extends BuildWrapperDescriptor {
 
         private CopyOnWriteList<PolyspaceAccessConfig> polyspaceAccessConfigs = new CopyOnWriteList<>();
-        private CopyOnWriteList<PolyspaceMetricsConfig> polyspaceMetricsConfigs = new CopyOnWriteList<>();
         private CopyOnWriteList<PolyspaceBinConfig> polyspaceBinConfigs = new CopyOnWriteList<>();
 
         String polyspaceAccessURL;
-        String polyspaceMetricsURL;
 
         String getPolyspaceAccessURL() { return polyspaceAccessURL; }
         void setPolyspaceAccessURL(String polyspaceAccessURL) { this.polyspaceAccessURL = polyspaceAccessURL; }
-
-        String getPolyspaceMetricsURL() { return polyspaceMetricsURL; }
-        void setPolyspaceMetricsURL(String polyspaceMetricsURL) { this.polyspaceMetricsURL = polyspaceMetricsURL; }
 
         public DescriptorImpl() {
             load();
@@ -250,7 +212,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
           polyspaceAccessConfigs.replaceBy(req.bindJSONToList(PolyspaceAccessConfig.class, formData.get("polyspaceAccessConfigs")));
-          polyspaceMetricsConfigs.replaceBy(req.bindJSONToList(PolyspaceMetricsConfig.class, formData.get("polyspaceMetricsConfigs")));
           polyspaceBinConfigs.replaceBy(req.bindJSONToList(PolyspaceBinConfig.class, formData.get("polyspaceBinConfigs")));
 
           save();
@@ -293,38 +254,11 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           return null;
         }
 
-        // configuration of Polyspace Metrics
-        public void addPolyspaceMetricsConfig(PolyspaceMetricsConfig value) {
-          polyspaceMetricsConfigs.add(value);
-        }
-        public PolyspaceMetricsConfig[] getpolyspaceMetricsConfigs() {
-            return polyspaceMetricsConfigs.toArray(new PolyspaceMetricsConfig[0]);
-        }
-        public PolyspaceMetricsConfig getMetricsConfig(String name) {
-          if (name == null) {
-            return null;
-          }
-          for (PolyspaceMetricsConfig config : polyspaceMetricsConfigs) {
-            if ((config.getPolyspaceMetricsName() != null) && (config.getPolyspaceMetricsName().equals(name)))
-              return config;
-          }
-          return null;
-        }
-
         public ListBoxModel doFillServerConfigItems() {
             ListBoxModel items = new ListBoxModel();
             items.add(getUnsetValue());
             for (PolyspaceAccessConfig config : polyspaceAccessConfigs) {
                 items.add(config.getPolyspaceAccessName());
-            }
-            return items;
-        }
-
-        public ListBoxModel doFillMetricsConfigItems() {
-            ListBoxModel items = new ListBoxModel();
-            items.add(getUnsetValue());
-            for (PolyspaceMetricsConfig config : polyspaceMetricsConfigs) {
-                items.add(config.getPolyspaceMetricsName());
             }
             return items;
         }
@@ -335,39 +269,6 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
                 items.add(config.getName());
             }
             return items;
-        }
-
-        public FormValidation doCheckPolyspaceMetrics(@AncestorInPath Item item, @QueryParameter String metricsConfig, @QueryParameter String binConfig)
-            throws IOException, ServletException {
-          final PolyspaceBinConfig bin = getBinConfig(binConfig);
-          final PolyspaceMetricsConfig metrics = getMetricsConfig(metricsConfig);
-
-          if (item == null) {
-            return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.internalError());
-          }
-          item.checkPermission(Item.CONFIGURE);
-
-          if ((metrics == null) || (metrics.getPolyspaceMetricsName().equals(getUnsetValue()))) {
-            return FormValidation.warning("Polyspace Metrics Configuration is not provided");
-          }
-
-          String command = bin.getPolyspacePath() + File.separator + "polyspace-results-repository" + PolyspaceConfigUtils.exeSuffix();
-          try {
-            PolyspaceConfigUtils.checkPolyspaceBinFolderExists(bin.getPolyspacePath());
-            PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
-          } catch (FormValidation val) {
-            return val;
-          }
-          List<String> Metrics = new ArrayList<>();
-          Metrics.add(command);
-          Metrics.add("-server");
-          Metrics.add(metrics.getPolyspaceMetricsName());
-          Metrics.add("-get-projects-list");
-          if (PolyspaceConfigUtils.checkPolyspaceCommand(Metrics)) {
-            return FormValidation.ok(com.mathworks.polyspace.jenkins.config.Messages.polyspaceCorrectConfig());
-          } else {
-            return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.polyspaceMetricsWrongConfig());
-          }
         }
 
         public ListBoxModel doFillPolyspaceAccessCredentialIdItems(@AncestorInPath Jenkins context) {
