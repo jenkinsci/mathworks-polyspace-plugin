@@ -1,16 +1,16 @@
 // Copyright (c) 2024 The MathWorks, Inc.
 // All Rights Reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,27 +23,27 @@ package com.mathworks.polyspace.jenkins.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
-
 import com.mathworks.polyspace.jenkins.utils.PolyspaceUtils;
 
-public class PolyspaceUtilsTest {
+import org.junit.jupiter.api.Test;
+
+class PolyspaceUtilsTest {
+
   private static Path noEndingNewLine = Paths.get(System.getProperty("user.dir"), "src", "test", "data", "simpleFileWithNoEndingNewLine.txt");
   private static Path withEndingNewLine = Paths.get(System.getProperty("user.dir"), "src", "test", "data", "simpleFileWithEndingNewLine.txt");
 
   @Test
-  public void testGetFileContent() throws IOException
+  void testGetFileContent() throws Exception
   {
     assertEquals("line1\nline2\nline3 with ending new line", PolyspaceUtils.getFileContent(noEndingNewLine));
     assertEquals("line1\nline2\nline3 with ending new line\n", PolyspaceUtils.getFileContent(withEndingNewLine));
   }
 
   @Test
-  public void testGetFileLineCount() throws IOException
+  void testGetFileLineCount() throws Exception
   {
     assertEquals(3, PolyspaceUtils.getFileLineCount(noEndingNewLine));
     assertEquals(3, PolyspaceUtils.getFileLineCount(withEndingNewLine));
