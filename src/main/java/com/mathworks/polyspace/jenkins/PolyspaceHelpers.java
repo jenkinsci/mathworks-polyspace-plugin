@@ -1,16 +1,16 @@
 // Copyright (c) 2019-2024 The MathWorks, Inc.
 // All Rights Reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -61,7 +61,7 @@ public class PolyspaceHelpers {
     }
     System.out.println(PolyspaceHelpersUtils.getAccessResultRunId(Paths.get(arg[1])));
   }
-  
+
   private static void printProjectId(final String[] arg) throws IOException, RuntimeException {
     if (arg.length != 2) {
       System.out.println("Usage: ps_helper -print-projectid <access upload output>");
@@ -69,7 +69,7 @@ public class PolyspaceHelpers {
     }
     System.out.println(PolyspaceHelpersUtils.getAccessResultProjectId(Paths.get(arg[1])));
   }
-  
+
   private static void printProjectUrl(final String[] arg) throws IOException, RuntimeException {
     if (arg.length != 3) {
       System.out.println("Usage: ps_helper -print-projecturl <access upload output> <access_url>");
@@ -77,7 +77,7 @@ public class PolyspaceHelpers {
     }
     System.out.println(PolyspaceHelpersUtils.getAccessResultUrl(Paths.get(arg[1]), arg[2]));
   }
-  
+
   private static void reportStatus(final String[] arg) throws IOException, NumberFormatException {
     if (arg.length != 3) {
       System.out.println("Usage: ps_helper -report-status <report> <nb_to_fail>");
@@ -95,7 +95,7 @@ public class PolyspaceHelpers {
   }
 
   public static void main (String[] arg) throws IOException, RuntimeException, NumberFormatException{
-    Boolean usage = false;
+    boolean usage = false;
     if (arg.length == 0) {
       usage = true;
     } else if (arg[0].equals("-report-filter") || arg[0].equals("report_filter")) {

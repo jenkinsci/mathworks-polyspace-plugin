@@ -1,16 +1,16 @@
 // Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,8 +24,7 @@ package com.mathworks.polyspace.jenkins;
 import com.mathworks.polyspace.jenkins.config.*;
 
 import org.kohsuke.stapler.*;
-import hudson.Extension;
-import hudson.util.FormValidation;
+
 import java.io.*;
 import java.util.*;
 
@@ -40,7 +39,6 @@ import net.sf.json.JSONObject;
 import javax.servlet.ServletException;
 import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.common.*;
-import com.cloudbees.plugins.credentials.domains.*;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
 
@@ -74,7 +72,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     public void setMetricsConfig(String metricsConfig) {
       this.metricsConfig = metricsConfig;
     }
-    
+
     public String getValue(String value, String default_value) {
       if (!StringUtils.isEmpty(value)) {
         return value;
@@ -193,12 +191,12 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     private static String retrieveCredentialInfo(boolean getUsername, String credentialId){
         if (!StringUtils.isEmpty(credentialId)){
             StandardCredentials credentials = CredentialsMatchers.firstOrNull(
-                    CredentialsProvider.lookupCredentials(
-                            StandardCredentials.class, Jenkins.get(), ACL.SYSTEM, Collections.<DomainRequirement>emptyList()
+                    CredentialsProvider.lookupCredentialsInItemGroup(
+                            StandardCredentials.class, Jenkins.get(), ACL.SYSTEM2, Collections.emptyList()
                     ), CredentialsMatchers.withId(credentialId)
             );
 
-            if (credentials != null && credentials instanceof UsernamePasswordCredentials) {
+            if (credentials instanceof UsernamePasswordCredentials) {
                 UsernamePasswordCredentials c = (UsernamePasswordCredentials)credentials;
                 if (getUsername){
                     return c.getUsername();
@@ -226,9 +224,9 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     @Extension
     public static final class DescriptorImpl extends BuildWrapperDescriptor {
 
-        private CopyOnWriteList<PolyspaceAccessConfig> polyspaceAccessConfigs = new CopyOnWriteList<PolyspaceAccessConfig>();
-        private CopyOnWriteList<PolyspaceMetricsConfig> polyspaceMetricsConfigs = new CopyOnWriteList<PolyspaceMetricsConfig>();
-        private CopyOnWriteList<PolyspaceBinConfig> polyspaceBinConfigs = new CopyOnWriteList<PolyspaceBinConfig>();
+        private CopyOnWriteList<PolyspaceAccessConfig> polyspaceAccessConfigs = new CopyOnWriteList<>();
+        private CopyOnWriteList<PolyspaceMetricsConfig> polyspaceMetricsConfigs = new CopyOnWriteList<>();
+        private CopyOnWriteList<PolyspaceBinConfig> polyspaceBinConfigs = new CopyOnWriteList<>();
 
         String polyspaceAccessURL;
         String polyspaceMetricsURL;
@@ -360,7 +358,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           } catch (FormValidation val) {
             return val;
           }
-          List<String> Metrics = new ArrayList<String>();
+          List<String> Metrics = new ArrayList<>();
           Metrics.add(command);
           Metrics.add("-server");
           Metrics.add(metrics.getPolyspaceMetricsName());
@@ -374,15 +372,15 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
 
         public ListBoxModel doFillPolyspaceAccessCredentialIdItems(@AncestorInPath Jenkins context) {
             return new StandardListBoxModel()
-                    .withEmptySelection()
-                    .withMatching(
+                    .includeEmptyValue()
+                    .includeMatchingAs(
+                            ACL.SYSTEM2,
+                            context,
+                            StandardUsernamePasswordCredentials.class,
+                            new ArrayList<>(),
                             CredentialsMatchers.anyOf(
                                     CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class)
-                            ),
-                            CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class,
-                                    context,
-                                    ACL.SYSTEM,
-                                    new ArrayList<DomainRequirement>())
+                            )
                     );
         }
 
