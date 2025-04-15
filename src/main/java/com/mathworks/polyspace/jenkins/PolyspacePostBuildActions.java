@@ -1,16 +1,16 @@
 // Copyright (c) 2019-2023 The MathWorks, Inc.
 // All Rights Reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,6 @@ import com.mathworks.polyspace.jenkins.utils.PolyspaceHelpersUtils;
 import com.mathworks.polyspace.jenkins.utils.PolyspaceUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -173,7 +172,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         MimeBodyPart textBodyPart = new MimeBodyPart();
         textBodyPart.setText(text, charset);
         multipart.addBodyPart(textBodyPart);
-         
+
         msg.setContent(multipart);
         Transport.send(msg);
       } catch (RuntimeException e) {
@@ -194,7 +193,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       }
       // InputStream inputStream = new FileInputStream(fileName);
       // return IOUtils.toString(inputStream);
-      return new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
+      return Files.readString(Paths.get(fileName));
     }
 
     private String generateMailBody(final String body, final String owner, final String attachName, final String attachSource, FilePath workspace, Run<?,?> build) {
@@ -216,8 +215,6 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         text += "Please check attached file " + attachName + "\n";
         try {
           text += "It contains " + PolyspaceHelpersUtils.getCountFindings(Paths.get(attachSource)) + " finding(s)\n";
-        } catch (RuntimeException e) {
-          text += "Cannot count nb of findings";
         } catch (Exception e) {
           text += "Cannot count nb of findings";
         }
@@ -313,7 +310,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
           {
             final String owner = ownerListScanner.nextLine();
             final String recipient = uniqueRecipients.isEmpty() ? owner : uniqueRecipients;
-  
+
             final String attachSource = getFileFromAgent(workspace, PolyspaceHelpersUtils.getReportOwner(Paths.get(queryBaseName), owner).toString());
             final String attachName = new File(attachSource).getName();
 

@@ -1,16 +1,16 @@
 // Copyright (c) 2024 The MathWorks, Inc.
 // All Rights Reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -61,7 +61,7 @@ public class PolyspaceHelpersUtils {
   public static void appendLineInFile(final Path file, final String line) throws IOException
   {
     final String lineWithNewLine = line + "\n";
-    Files.write(file, lineWithNewLine.getBytes(StandardCharsets.UTF_8), 
+    Files.write(file, lineWithNewLine.getBytes(StandardCharsets.UTF_8),
       StandardOpenOption.CREATE, // Create the file if it does not exist
       StandardOpenOption.APPEND); // Append to the file if it exists
   }
@@ -80,13 +80,13 @@ public class PolyspaceHelpersUtils {
   public static Path getReportOwner(final Path report, final String owner)
   {
     if (owner.isEmpty()) return report;
-    
+
     final String reportAsString = report.toString();
     final int extensionPos = reportAsString.lastIndexOf('.');
     final int separatorPos = reportAsString.lastIndexOf(File.separatorChar);
-    
+
     if (separatorPos >= extensionPos) return Paths.get(reportAsString + "_" + owner);
-    
+
     return Paths.get(reportAsString.substring(0, extensionPos) + "_" + owner + reportAsString.substring(extensionPos));
   }
 
@@ -174,13 +174,13 @@ public class PolyspaceHelpersUtils {
       // If the output file already exists, new lines will be concatenated to the existing file.
       // This allows to concat several filtering outputs into the same target file.
       ArrayList<String> filteredReportContent = new ArrayList<>();
-      Boolean addTitle = (!filteredReport_owner.toFile().exists());
+      boolean addTitle = (!filteredReport_owner.toFile().exists());
       if (addTitle)
       {
         filteredReportContent.add(titleLine);
       }
 
-      Boolean filteredReportEmpty = true;
+      boolean filteredReportEmpty = true;
       while (originalReportScanner.hasNextLine())
       {
         String line = originalReportScanner.nextLine();
@@ -216,7 +216,7 @@ public class PolyspaceHelpersUtils {
   }
 
   /**
-   * 
+   *
    * @param report - Path to the report
    * @param max - Thereshold for status
    * @return - Job status string: SUCCESS if num findings smaller than {@code max}, UNSTABLE otherwise
@@ -234,19 +234,19 @@ public class PolyspaceHelpersUtils {
   static public class AccessUploadResult {
     public String runId;
     public String projectId;
-    
+
     public AccessUploadResult() {
       runId = "";
       projectId = "";
     }
-    
+
     public AccessUploadResult(final String r, final String p) {
       runId = r;
       projectId = p;
     }
-  };
-  
-  /**
+  }
+
+    /**
    * @param output - Captured content of upload command stdout
    * @return - RunId and ProjectId for result found in {@code output}
    * @throws IOException Error while accessing {@code output}
@@ -255,7 +255,7 @@ public class PolyspaceHelpersUtils {
   {
     AccessUploadResult result = new AccessUploadResult();
     final String content = PolyspaceUtils.getFileContent(output);
-    
+
     content.lines()
       .filter(line -> line.startsWith("Upload successful for RUN_ID"))
       .findFirst()
@@ -264,11 +264,11 @@ public class PolyspaceHelpersUtils {
           result.runId = tokens[4];
           result.projectId = tokens[7];
       });
-    
+
     return result;
-  };
-  
-  /**
+  }
+
+    /**
    * @param output - Path to the report
    * @return Result runId
    * @throws IOException Error while accessing {@code output}
@@ -281,9 +281,9 @@ public class PolyspaceHelpersUtils {
       throw new RuntimeException("Cannot find runId in '" + output + "'");
     }
     return result.runId;
-  };
-  
-  /**
+  }
+
+    /**
    * @param output - Path to the report
    * @return Result projectId
    * @throws IOException Error while accessing {@code output}
@@ -296,9 +296,9 @@ public class PolyspaceHelpersUtils {
       throw new RuntimeException("Cannot find projectId in '" + output + "'");
     }
     return result.projectId;
-  };
-  
-  /**
+  }
+
+    /**
    * @param output - Path to the report
    * @param accessURL - Root Access server URL
    * @return Results URL
@@ -312,5 +312,5 @@ public class PolyspaceHelpersUtils {
       throw new RuntimeException("Cannot find project url from '" + output + "'");
     }
     return accessURL + "/metrics/index.html?a=review&p=" + result.projectId + "&r=" + result.runId;
-  };
+  }
 }
