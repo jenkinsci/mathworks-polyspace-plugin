@@ -8,8 +8,7 @@
   </parent>
 
   <properties>
-    <revision>1.0.12</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/mathworks-polyspace-plugin</gitHubRepo>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
@@ -18,7 +17,7 @@
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <groupId>io.jenkins.plugins</groupId>
   <name>MathWorks Polyspace Plugin</name>
   <url>https://github.com/jenkinsci/mathworks-polyspace-plugin</url>
