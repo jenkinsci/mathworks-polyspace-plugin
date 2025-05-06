@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2019-2024 The MathWorks, Inc.
+  Copyright (c) 2019-2025 The MathWorks, Inc.
   All Rights Reserved.
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,14 +27,13 @@
 
 The MathWorks Polyspace Plugin for Jenkins enables automated Polyspace analyses within Jenkins.
 
-## Getting Started 
+## Getting Started
 
 ### Step 1: Configure Plugin
 Select **Manage Jenkins** and then **Configure System**. In the **Polyspace** section, enter shorthands for:
 
 * Paths to Polyspace Server installation folder.
 * Hostname, port number and protocol for Polyspace Access server.
-* Hostname and port number for Polyspace Metrics server.
 
 You later use these shorthands in Jenkins projects.
 Also, specify the e-mail server (if not already specified) in the **E-mail Notification** section.
@@ -42,8 +41,8 @@ Also, specify the e-mail server (if not already specified) in the **E-mail Notif
 ### Step 2: Configure Jenkins Project
 
 Create a new project. In the **Build Environment** section of the project, choose **Select Polyspace installation settings**. Then:
-1. Select the global shorthands you defined earlier for the Polyspace installation folder, Polyspace Metrics server and/or Polyspace Access server. 
-2. Select an username and encrypted password for Polyspace Access. You can also add new users with the **Add** button. The username and password gets stored in the Credentials plugin. You can edit or delete users (or add new users) directly in the Credentials plugin. 
+1. Select the global shorthands you defined earlier for the Polyspace installation folder and Polyspace Access server.
+2. Select an username and encrypted password for Polyspace Access. You can also add new users with the **Add** button. The username and password gets stored in the Credentials plugin. You can edit or delete users (or add new users) directly in the Credentials plugin.
 
 **Note**: Obtain an encrypted form of a Polyspace Access password using `polyspace-access -encrypt-password`. See [polyspace-access](https://www.mathworks.com/help/bugfinder/ref/polyspaceaccess.html).
 
@@ -53,7 +52,6 @@ In the **Build** section of the project, select **Execute shell** or **Execute W
 
 * [polyspace-bug-finder-server](https://www.mathworks.com/help/bugfinder/ref/polyspacebugfinderservercommand.html) or [polyspace-code-prover-server](https://www.mathworks.com/help/codeprover/ref/polyspacecodeproverservercommand.html) to run Polyspace Bug Finder or Polyspace Code Prover.
 * [polyspace-access](https://www.mathworks.com/help/bugfinder/ref/polyspaceaccess.html) to upload analysis results to the Polyspace Access server.
-* polyspace-results-repository to upload analysis results to the Polyspace Metrics server.
 
 For other Polyspace commands, see the documentation of
 [Polyspace Bug Finder Server](https://www.mathworks.com/help/bugfinder/) or
@@ -63,7 +61,6 @@ See example scripts below.
 You can also use the helper utilities available with the Jenkins plugin:
 
 * `ps_helper_access` to use the `polyspace-access` command without specifying hostname, port number and user credentials.
-* `ps_helper_metrics` to use the `polyspace-results-repository` command without specifying hostname and port number.
 * `ps_helper` to filter results based on specified criteria, generate a pass/fail status for the build based on number of findings and print a project id and run number for the current upload.
 
 For the syntax of these helper utilities, click the **?** icon next to the Polyspace fields in the **Build Environment** section of the project.

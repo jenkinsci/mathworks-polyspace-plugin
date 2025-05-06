@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2019 The MathWorks, Inc.
+Copyright (c) 2019-2025 The MathWorks, Inc.
 All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,17 +27,6 @@ THE SOFTWARE.
     <f:entry title="${%Polyspace installation folder}" field="binConfig">
         <f:select />
     </f:entry>
-
-    <f:entry title="${%Polyspace Metrics server}" field="metricsConfig">
-        <f:select />
-    </f:entry>
-
-    <f:validateButton
-          method="checkPolyspaceMetrics"
-          title="Check server settings"
-          progress="Check server settings..."
-          with="metricsConfig,binConfig"
-    />
 
     <f:entry title="${%Polyspace Access server}" field="serverConfig">
         <f:select />

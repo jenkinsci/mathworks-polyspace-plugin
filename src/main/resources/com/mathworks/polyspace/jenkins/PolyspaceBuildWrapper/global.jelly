@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2019 The MathWorks, Inc.
+Copyright (c) 2019-2025 The MathWorks, Inc.
 All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,15 +28,9 @@ THE SOFTWARE.
         <f:repeatableProperty field="polyspaceBinConfigs" header="${%Polyspace installation folder}" add="${%Add Polyspace installation folder}"/>
     </f:entry>
 
-    <f:entry title="${%Polyspace Metrics server}" description="" field="polyspaceMetrics">
-        <f:repeatableProperty field="polyspaceMetricsConfigs" header="${%Polyspace Metrics server}" add="${%Add Polyspace Metrics server}"/>
-    </f:entry>
-
-    <!-- COMMENT OUT to enable Polyspace Access -->
     <f:entry title="${%Polyspace Access server}" description="" field="polyspaceAccesses">
         <f:repeatableProperty field="polyspaceAccessConfigs" header="${%Polyspace Access server}" add="${%Add Polyspace Access server}"/>
     </f:entry>
-    <!-- End of comment to enable Polyspace Access -->
 
   </f:section>
 </j:jelly>

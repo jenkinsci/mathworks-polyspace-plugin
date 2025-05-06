@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 The MathWorks, Inc.
+// Copyright (c) 2019-2025 The MathWorks, Inc.
 // All Rights Reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -226,9 +226,6 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       text += "Polyspace configuration is using\n";
       if (!PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL().equals("POLYSPACE_ACCESS_URL_IS_UNSET")) {
         text += "- Polyspace Access " + PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL() + "\n";
-      }
-      if (!PolyspaceBuildWrapper.descriptor().getPolyspaceMetricsURL().isEmpty()) {
-        text += "- Polyspace Metrics " + PolyspaceBuildWrapper.descriptor().getPolyspaceMetricsURL() + "\n";
       }
       return text;
     }

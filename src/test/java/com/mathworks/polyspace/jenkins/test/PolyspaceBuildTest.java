@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 The MathWorks, Inc.
+// Copyright (c) 2019-2025 The MathWorks, Inc.
 // All Rights Reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -66,16 +66,6 @@ class PolyspaceBuildTest {
     bin2.setName("bin2");
     bin2.setPolyspacePath("path_to_bin2");
 
-    // Set some Metrics
-    PolyspaceMetricsConfig metrics1 = new PolyspaceMetricsConfig();
-    metrics1.setPolyspaceMetricsName("metrics1");
-    metrics1.setPolyspaceMetricsHost("metrics1.com");
-    metrics1.setPolyspaceMetricsPort("22427");
-    PolyspaceMetricsConfig metrics2 = new PolyspaceMetricsConfig();
-    metrics2.setPolyspaceMetricsName("metrics2");
-    metrics2.setPolyspaceMetricsHost("metrics2.com");
-    metrics2.setPolyspaceMetricsPort("32427");
-
     // Set some Accesses
     PolyspaceAccessConfig access1 = new PolyspaceAccessConfig();
     access1.setPolyspaceAccessName("access1");
@@ -92,8 +82,6 @@ class PolyspaceBuildTest {
     wrapper = new PolyspaceBuildWrapper();
     wrapper.getDescriptor().addPolyspaceBinConfig(bin1);
     wrapper.getDescriptor().addPolyspaceBinConfig(bin2);
-    wrapper.getDescriptor().addPolyspaceMetricsConfig(metrics1);
-    wrapper.getDescriptor().addPolyspaceMetricsConfig(metrics2);
     wrapper.getDescriptor().addPolyspaceAccessConfig(access1);
     wrapper.getDescriptor().addPolyspaceAccessConfig(access2);
 
@@ -120,15 +108,6 @@ class PolyspaceBuildTest {
     assertEquals("bin2", bin.get(1).name);
     assertEquals("bin2", bin.get(1).value);
 
-    final ListBoxModel metrics = wrapper.getDescriptor().doFillMetricsConfigItems();
-    assertEquals(3, metrics.size());
-    assertEquals("<unset>", metrics.get(0).name);
-    assertEquals("<unset>", metrics.get(0).value);
-    assertEquals("metrics1", metrics.get(1).name);
-    assertEquals("metrics1", metrics.get(1).value);
-    assertEquals("metrics2", metrics.get(2).name);
-    assertEquals("metrics2", metrics.get(2).value);
-
     final ListBoxModel access = wrapper.getDescriptor().doFillServerConfigItems();
     assertEquals(3, access.size());
     assertEquals("<unset>", access.get(0).name);
@@ -142,11 +121,6 @@ class PolyspaceBuildTest {
   /* all environment variables */
   private static String[] allEnvVariables = {
     "PATH",
-
-    "ps_helper_metrics_upload",
-    "POLYSPACE_METRICS_HOST",
-    "POLYSPACE_METRICS_PORT",
-    "POLYSPACE_METRICS_URL",
 
     "ps_helper_access",
     "POLYSPACE_ACCESS_PROTOCOL",
@@ -172,20 +146,6 @@ class PolyspaceBuildTest {
   private void checkBinUnset(FreeStyleBuild build) throws Exception {
     rule.assertLogNotContains("path_to_bin1", build);
     rule.assertLogNotContains("path_to_bin2", build);
-  }
-
-  private void checkMetricsUnset(FreeStyleBuild build) throws Exception {
-    rule.assertLogContains("ps_helper_metrics_upload = ps_helper_metrics_upload IS UNSET", build);
-    rule.assertLogContains("POLYSPACE_METRICS_HOST = POLYSPACE_METRICS_HOST IS UNSET", build);
-    rule.assertLogContains("POLYSPACE_METRICS_PORT = POLYSPACE_METRICS_PORT IS UNSET", build);
-    rule.assertLogContains("POLYSPACE_METRICS_URL = POLYSPACE_METRICS_URL IS UNSET", build);
-  }
-
-  private void checkMetricsSet(FreeStyleBuild build, String ps_helper_metrics_upload, String host, String port, String url) throws Exception {
-    rule.assertLogContains("ps_helper_metrics_upload = " + ps_helper_metrics_upload, build);
-    rule.assertLogContains("POLYSPACE_METRICS_HOST = " + host, build);
-    rule.assertLogContains("POLYSPACE_METRICS_PORT = " + port, build);
-    rule.assertLogContains("POLYSPACE_METRICS_URL = " + url, build);
   }
 
   private void checkAccessUnset(FreeStyleBuild build) throws Exception {
@@ -226,7 +186,6 @@ class PolyspaceBuildTest {
 
     // Assert that the console log contains the output we expect
     checkBinUnset(build);
-    checkMetricsUnset(build);
   }
 
   // Check "PATH" contains the selected bin path, that is "path_to_bin2"
@@ -240,25 +199,6 @@ class PolyspaceBuildTest {
     // Assert that the console log contains the output we expect
     rule.assertLogContains("path_to_bin2", build);
     rule.assertLogNotContains("path_to_bin1", build);
-    checkMetricsUnset(build);
-    checkAccessUnset(build);
-  }
-
-  // Check "Metrics Variables" are OK
-  @Test
-  void testMetrics() throws Exception {
-    wrapper.setMetricsConfig("metrics2");
-
-    String command = getCommandAllEnvVariables();
-    FreeStyleBuild build = runBatchCommand(command);
-
-    // Assert that the console log contains the output we expect
-    checkBinUnset(build);
-    checkMetricsSet(build,
-      "polyspace-results-repository -f -upload -server metrics2.com:32427",
-      "metrics2.com",
-      "32427",
-      "metrics2.com");    // the url does not contain the port as the port is used to upload only
     checkAccessUnset(build);
   }
 
@@ -272,26 +212,12 @@ class PolyspaceBuildTest {
 
     // Assert that the console log contains the output we expect
     checkBinUnset(build);
-    checkMetricsUnset(build);
     checkAccessSet(build,
       "ps_helper_access IS UNSET",        // because there is no credentials
       "http",
       "access2.com",
       "19444",
       "http://access2.com:19444");
-  }
-
-  // Check test functions for Metrics
-  @Test
-  void testCheckMetrics() throws Exception {
-    PolyspaceMetricsConfig.DescriptorImpl desc_metrics = new PolyspaceMetricsConfig.DescriptorImpl();
-
-    FormValidation port_metrics_ok = desc_metrics.doCheckPolyspaceMetricsPort("1234");
-    assertEquals(FormValidation.Kind.OK, port_metrics_ok.kind);
-
-    FormValidation port_metrics_ko = desc_metrics.doCheckPolyspaceMetricsPort("wrong-port");
-    assertEquals(FormValidation.Kind.ERROR, port_metrics_ko.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.portMustBeANumber(), port_metrics_ko.renderHtml());
   }
 
   // Check test functions for Access
