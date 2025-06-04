@@ -65,6 +65,12 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
     private String mailBodyBaseName;     /** base name of the file containing the mail body. "" if generic body is to be applied. file for a user is mailBodyBaseName _ user . ext */
     private String uniqueRecipients;     /** Unique recipient that receives all emails */
 
+    // The standard line ending for email messages, as defined by the Internet Message Format
+    // standard (RFC 5322), is the sequence of carriage return (CR) followed by line feed (LF),
+    // represented as \r\n. 
+    // (Whatever the OS).
+    private String CRLF = "\r\n";
+
     @DataBoundConstructor
     public PolyspacePostBuildActions() { }
 
@@ -159,7 +165,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
           if (file.length()  > 10*1024*1024) {
             // size of the attachement is too large
             // do not attach, and add a message in the mail body
-            text += "\n\nSize of the attached file is too large  -  Not attached\n";
+            text += CRLF + CRLF + "Size of the attached file is too large  -  Not attached" + CRLF;
           } else {
           MimeBodyPart attachmentBodyPart= new MimeBodyPart();
           DataSource source = new FileDataSource(attachSource);
@@ -207,25 +213,31 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
       String text = "";
       if (owner.isEmpty()) {
-        text += "General email sent by Polyspace Jenkins Plugin\n\n";
+        text += "General email sent by Polyspace Jenkins Plugin" + CRLF + CRLF;
       } else {
-        text += "Dear " + owner + ",\nPlease find attached the findings you own.\n\n";
+        text += "Dear " + owner + "," + CRLF;
+        text += "Please find attached the findings you own." + CRLF + CRLF;
       }
+
       if (!attachName.isEmpty()) {
-        text += "Please check attached file " + attachName + "\n";
+        text += "Please check attached file " + attachName + CRLF;
         try {
-          text += "It contains " + PolyspaceHelpersUtils.getCountFindings(Paths.get(attachSource)) + " finding(s)\n";
+          text += "It contains ";
+          text += PolyspaceHelpersUtils.getCountFindings(Paths.get(attachSource));
+          text += " finding(s)" + CRLF;
         } catch (Exception e) {
-          text += "Cannot count nb of findings";
+          text += "Cannot count nb of findings" + CRLF;
         }
       } else if (!attachSource.isEmpty()) {
-        text += "Warning: Could not attach " + attachSource + "\n";
+        text += "Warning: Could not attach " + attachSource + CRLF;
       }
-      text += "\n";
-      text += "Check Jenkins console output at " + getJenkinsLocationConfiguration().getUrl() + build.getUrl() + "\n";
-      text += "Polyspace configuration is using\n";
+
+      text += CRLF;
+      text += "Check Jenkins console output at ";
+      text += getJenkinsLocationConfiguration().getUrl() + build.getUrl() + CRLF;
+      text += "Polyspace configuration is using" + CRLF;
       if (!PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL().equals("POLYSPACE_ACCESS_URL_IS_UNSET")) {
-        text += "- Polyspace Access " + PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL() + "\n";
+        text += "- Polyspace Access " + PolyspaceBuildWrapper.descriptor().getPolyspaceAccessURL() + CRLF;
       }
       return text;
     }
