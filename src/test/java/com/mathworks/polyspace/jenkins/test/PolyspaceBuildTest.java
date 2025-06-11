@@ -28,6 +28,8 @@ import hudson.Functions;
 import hudson.model.*;
 import hudson.tasks.*;
 import hudson.util.*;
+import io.jenkins.cli.shaded.org.apache.commons.io.FileUtils;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.jvnet.hudson.test.*;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @WithJenkins
 class PolyspaceBuildTest {
@@ -47,12 +52,11 @@ class PolyspaceBuildTest {
   /* the wrapper to be used by all tests */
   private PolyspaceBuildWrapper wrapper;
 
-  private File ROOT_TMP_FOLDER;
-  private String ROOT_TMP = System.getProperty("java.io.tmpdir") + File.separator + "jenkins-plugin-unittests";
-  private String BIN_NOT_FOUND = ROOT_TMP + File.separator +  "binNotFound";
-  private String BIN_NOT_VALID = ROOT_TMP + File.separator +  "NotValid/polyspace/bin";
-  private String FAKE_BIN_FOLDER = ROOT_TMP + File.separator +  "NoValidBinary/polyspace/bin";
-  private String FAKE_POLYSPACE = FAKE_BIN_FOLDER + File.separator +  "polyspace-bug-finder";
+  private Path ROOT_TMP;
+  private Path BIN_NOT_FOUND;
+  private Path BIN_NOT_VALID;
+  private Path FAKE_BIN_FOLDER;
+  private Path FAKE_POLYSPACE;
 
   /* Create configuration and wrapper common to all tests */
   @BeforeEach
@@ -86,16 +90,28 @@ class PolyspaceBuildTest {
     wrapper.getDescriptor().addPolyspaceAccessConfig(access2);
 
     // Create some folders and files to be checked
-    ROOT_TMP_FOLDER = new File(ROOT_TMP);
-    ROOT_TMP_FOLDER.mkdirs();
-    new File(BIN_NOT_VALID).mkdirs();
-    new File(FAKE_BIN_FOLDER).mkdirs();
-    new File(FAKE_POLYSPACE).createNewFile();
+    ROOT_TMP = Paths.get(System.getProperty("java.io.tmpdir"), "jenkins-plugin-unittests");
+    Files.createDirectories(ROOT_TMP);
+
+    // BIN_NOT_FOUND will not be foundf as it will not be created
+    BIN_NOT_FOUND = ROOT_TMP.resolve("binNotFound");
+
+    BIN_NOT_VALID = ROOT_TMP.resolve("NotValid/polyspace/bin");
+    Files.createDirectories(BIN_NOT_VALID);
+
+    FAKE_BIN_FOLDER = ROOT_TMP.resolve("NoValidBinary/polyspace/bin");
+    Files.createDirectories(FAKE_BIN_FOLDER);
+
+    // FAKE_POLYSPACE will not be able to respond to "-h"
+    FAKE_POLYSPACE = FAKE_BIN_FOLDER.resolve("polyspace-bug-finder" + PolyspaceConfigUtils.exeSuffix());
+    Files.createFile(FAKE_POLYSPACE);
   }
 
   @AfterEach
-  void tearDown() {
-    ROOT_TMP_FOLDER.delete();
+  void tearDown() throws IOException {
+    if (ROOT_TMP != null) {
+      FileUtils.deleteDirectory(ROOT_TMP.toFile());
+    }
   }
 
   // Check the drop down list, that can be chosen in "Build Environment"
@@ -135,10 +151,11 @@ class PolyspaceBuildTest {
     for (String var : allEnvVariables) {
       command.append("echo ").append(var).append(" = ");
       if (isWindows) {
-        command.append("%").append(var).append("%\n");
+        command.append("%").append(var).append("%");
       } else {
-        command.append("$").append(var).append("\n");
+        command.append("$").append(var);
       }
+      command.append(System.lineSeparator());
     }
     return command.toString();
   }
@@ -248,15 +265,15 @@ class PolyspaceBuildTest {
   void testCheckPolyspaceBin() throws Exception {
     PolyspaceBinConfig.DescriptorImpl desc_bin = new PolyspaceBinConfig.DescriptorImpl();
 
-    FormValidation path_bin_not_found = desc_bin.doCheckPolyspacePath(BIN_NOT_FOUND); // Folder was not created
+    FormValidation path_bin_not_found = desc_bin.doCheckPolyspacePath(BIN_NOT_FOUND.toString()); // Folder was not created
     assertEquals(FormValidation.Kind.WARNING, path_bin_not_found.kind);
     assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotFound(), path_bin_not_found.renderHtml());
 
-    FormValidation path_bin_not_valid = desc_bin.doCheckPolyspacePath(BIN_NOT_VALID); // Folder exists it but it does not contain a polyspace binary
+    FormValidation path_bin_not_valid = desc_bin.doCheckPolyspacePath(BIN_NOT_VALID.toString()); // Folder exists it but it does not contain a polyspace binary
     assertEquals(FormValidation.Kind.WARNING, path_bin_not_valid.kind);
     assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotValid(), path_bin_not_valid.renderHtml());
 
-    FormValidation path_bin_wrong_config = desc_bin.doCheckPolyspacePath(FAKE_BIN_FOLDER); // Folder exists but contains a wrong polyspace binary
+    FormValidation path_bin_wrong_config = desc_bin.doCheckPolyspacePath(FAKE_BIN_FOLDER.toString()); // Folder exists but contains a wrong polyspace binary
     assertEquals(FormValidation.Kind.ERROR, path_bin_wrong_config.kind);
     assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinWrongConfig() + " &#039;" + FAKE_POLYSPACE + " -h&#039;", path_bin_wrong_config.renderHtml());
   }

@@ -36,7 +36,6 @@ import hudson.security.ACL;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import net.sf.json.JSONObject;
-import javax.servlet.ServletException;
 import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.common.*;
 import jenkins.model.Jenkins;

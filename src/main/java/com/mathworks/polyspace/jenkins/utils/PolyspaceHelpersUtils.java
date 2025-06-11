@@ -60,7 +60,7 @@ public class PolyspaceHelpersUtils {
    */
   public static void appendLineInFile(final Path file, final String line) throws IOException
   {
-    final String lineWithNewLine = line + "\n";
+    final String lineWithNewLine = line + System.lineSeparator();
     Files.write(file, lineWithNewLine.getBytes(StandardCharsets.UTF_8),
       StandardOpenOption.CREATE, // Create the file if it does not exist
       StandardOpenOption.APPEND); // Append to the file if it exists
@@ -143,13 +143,13 @@ public class PolyspaceHelpersUtils {
     // Check filtered report
     Path filteredReport_owner = PolyspaceHelpersUtils.getReportOwner(filteredReport, owner);
     if (!owner.isEmpty() && filteredReport_owner.toFile().isDirectory()) {
-      throw new RuntimeException("Cannot create filtered report as the directory '" + filteredReport_owner + "'");
+      throw new RuntimeException("Cannot create filtered report, a directory with the same name already exists: '" + filteredReport_owner + "'");
     }
 
     // Check owners list
     final Path ownerList = PolyspaceHelpersUtils.getReportOwnerList(filteredReport);   // name of the file that contains all owners that have been filtered
     if (ownerList.toFile().isDirectory()) {
-      throw new RuntimeException("Cannot create owner list as the directory '" + ownerList + "'");
+      throw new RuntimeException("Cannot create owner list, a directory with the same name already exists: '" + ownerList + "'");
     }
 
     // Return if original report is empty
@@ -198,7 +198,7 @@ public class PolyspaceHelpersUtils {
       PolyspaceUtils.writeContent(filteredReport_owner, filteredReportContent);
 
       if (!filteredReportEmpty && !owner.isEmpty()) {
-        // this owner must be added to the list of owner, if this is not already the case
+        // this owner must be added to the list of owners, if this is not already the case
         if (!PolyspaceHelpersUtils.isOwnerInFile(ownerList, owner)) {
           PolyspaceHelpersUtils.appendLineInFile(ownerList, owner);
         }

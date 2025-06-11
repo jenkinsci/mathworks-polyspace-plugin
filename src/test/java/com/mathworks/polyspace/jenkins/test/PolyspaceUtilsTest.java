@@ -38,8 +38,16 @@ class PolyspaceUtilsTest {
   @Test
   void testGetFileContent() throws Exception
   {
-    assertEquals("line1\nline2\nline3 with ending new line", PolyspaceUtils.getFileContent(noEndingNewLine));
-    assertEquals("line1\nline2\nline3 with ending new line\n", PolyspaceUtils.getFileContent(withEndingNewLine));
+    assertEquals(
+      "line1" + System.lineSeparator() +
+      "line2" + System.lineSeparator() +
+      "line3 with ending new line",
+      PolyspaceUtils.getFileContent(noEndingNewLine));
+    assertEquals(
+      "line1" + System.lineSeparator() +
+      "line2" + System.lineSeparator() +
+      "line3 with ending new line" + System.lineSeparator(),
+      PolyspaceUtils.getFileContent(withEndingNewLine));
   }
 
   @Test

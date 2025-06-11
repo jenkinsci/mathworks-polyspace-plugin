@@ -59,13 +59,18 @@ class PolyspaceHelpersUtilsTest {
   {
     Path tempFile = PolyspaceUtils.copyToTempFile(simpleFile);
     assertEquals(
-      "line1\nline2\nline3 with ending new line\n",
+      "line1" + System.lineSeparator() + 
+      "line2" + System.lineSeparator() + 
+      "line3 with ending new line" + System.lineSeparator(),
       PolyspaceUtils.getFileContent(tempFile)
     );
 
     PolyspaceHelpersUtils.appendLineInFile(tempFile, "line4");
     assertEquals(
-      "line1\nline2\nline3 with ending new line\nline4\n",
+      "line1" + System.lineSeparator() +
+      "line2" + System.lineSeparator() + 
+      "line3 with ending new line" + System.lineSeparator() + 
+      "line4" + System.lineSeparator(),
       PolyspaceUtils.getFileContent(tempFile)
     );
     Files.delete(tempFile);
@@ -170,8 +175,12 @@ class PolyspaceHelpersUtilsTest {
 
     PolyspaceHelpersUtils.reportFilter(results, filteredReport, owner, new String[] { "Function", "foo()" });
 
-    assertEquals(PolyspaceUtils.getFileContent(allFoo), PolyspaceUtils.getFileContent(computedFile));
-    assertEquals(PolyspaceUtils.getFileContent(allFooOwnersList), PolyspaceUtils.getFileContent(computedOwnersList));
+    String allFooContent = PolyspaceUtils.getFileContent(allFoo);
+    String computedFileContent = PolyspaceUtils.getFileContent(computedFile);
+    assertEquals(allFooContent, computedFileContent);
+    String allFooOwnersListContent = PolyspaceUtils.getFileContent(allFooOwnersList);
+    String computedOwnersListContent = PolyspaceUtils.getFileContent(computedOwnersList);
+    assertEquals(allFooOwnersListContent, computedOwnersListContent);
 
     Files.deleteIfExists(computedOwnersList);
     Files.deleteIfExists(computedFile);
@@ -199,36 +208,28 @@ class PolyspaceHelpersUtilsTest {
   void testReportFilterDirectoryAsFilteredReport() throws Exception
   {
     // Test exception on giving a directory as filtered report
-    Path filteredReport = Paths.get(cwd, "src", "test", "data", "filteredReport");
+    Path filteredReport = Paths.get(cwd, "src", "test", "data", "1-filteredReport");
     String owner = "owner";
-    Path filteredReport_owner = PolyspaceHelpersUtils.getReportOwner(filteredReport, owner);
 
-    Files.deleteIfExists(filteredReport_owner);
-    Files.createDirectory(filteredReport_owner);
+    // A directory called .../src/test/data/1-filteredReport_owner already exists
 
     Exception exception = assertThrows(RuntimeException.class, () ->
       PolyspaceHelpersUtils.reportFilter(results, filteredReport, owner, new String[] { "header", "value"}));
-    assertEquals("Cannot create filtered report as the directory '" + cwd + "/src/test/data/filteredReport_owner'", exception.getMessage());
-
-    Files.deleteIfExists(filteredReport_owner);
+    assertEquals("Cannot create filtered report, a directory with the same name already exists: '" + filteredReport.toString() + "_" + owner +"'", exception.getMessage());
   }
 
   @Test
   void testReportFilterDirectoryAsOwnersList() throws Exception
   {
     // Test exception when owner list file is a directory
-    Path filteredReport = Paths.get(cwd, "src", "test", "data", "filteredReport");
+    Path filteredReport = Paths.get(cwd, "src", "test", "data", "2-filteredReport");
     String owner = "owner";
-    final Path ownerList = PolyspaceHelpersUtils.getReportOwnerList(filteredReport);   // name of the file that contains all owners that have been filtered
 
-    Files.deleteIfExists(ownerList);
-    Files.createDirectory(ownerList);
+    // A directory called .../src/test/data/2-filteredReport_owner already exists
 
     Exception exception = assertThrows(RuntimeException.class, () ->
       PolyspaceHelpersUtils.reportFilter(results,filteredReport, owner, new String[] { "header", "value"}));
-    assertEquals("Cannot create owner list as the directory '" + cwd + "/src/test/data/filteredReport.owners.list'", exception.getMessage());
-
-    Files.deleteIfExists(ownerList);
+    assertEquals("Cannot create owner list, a directory with the same name already exists: '" + filteredReport.toString() + ".owners.list'", exception.getMessage());
   }
 
   @Test
@@ -260,15 +261,15 @@ class PolyspaceHelpersUtilsTest {
 
     exception = assertThrows(RuntimeException.class, () ->
       PolyspaceHelpersUtils.getAccessResultRunId(accessUploadFailureOutput));
-    assertEquals("Cannot find runId in '" + cwd + "/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
+    assertEquals("Cannot find runId in '" + Paths.get(cwd, "src", "test", "data", "accessUploadFailureOutput.txt'"), exception.getMessage());
 
     exception = assertThrows(RuntimeException.class, () ->
       PolyspaceHelpersUtils.getAccessResultProjectId(accessUploadFailureOutput));
-    assertEquals("Cannot find projectId in '" + cwd + "/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
+    assertEquals("Cannot find projectId in '" + Paths.get(cwd, "src", "test", "data", "accessUploadFailureOutput.txt'"), exception.getMessage());
 
     exception = assertThrows(RuntimeException.class, () ->
       PolyspaceHelpersUtils.getAccessResultUrl(accessUploadFailureOutput, "ACCESS_URL"));
-    assertEquals("Cannot find project url from '" + cwd + "/src/test/data/accessUploadFailureOutput.txt'", exception.getMessage());
+    assertEquals("Cannot find project url from '" + Paths.get(cwd, "src", "test", "data", "accessUploadFailureOutput.txt'"), exception.getMessage());
   }
 
 }
