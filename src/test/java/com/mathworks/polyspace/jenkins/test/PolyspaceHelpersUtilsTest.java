@@ -269,7 +269,7 @@ class PolyspaceHelpersUtilsTest {
 
     exception = assertThrows(RuntimeException.class, () ->
       PolyspaceHelpersUtils.getAccessResultUrl(accessUploadFailureOutput, "ACCESS_URL"));
-    assertEquals("Cannot find project url from '" + Paths.get(cwd, "src", "test", "data", "accessUploadFailureOutput.txt'"), exception.getMessage());
+    assertEquals("Cannot find projectID or runID in '" + accessUploadFailureOutput + "' to build URL.", exception.getMessage());
   }
 
 }

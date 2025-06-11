@@ -307,10 +307,12 @@ public class PolyspaceHelpersUtils {
   public static String getAccessResultUrl(Path output, String accessURL) throws IOException
   {
     AccessUploadResult result = getAccessUploadResult(output);
-    if (result.projectId.isEmpty())
+    if (result.projectId.isEmpty() || result.runId.isEmpty())
     {
-      throw new RuntimeException("Cannot find project url from '" + output + "'");
+      throw new RuntimeException("Cannot find projectID or runID in '" + output + "' to build URL.");
     }
-    return accessURL + "/metrics/index.html?a=review&p=" + result.projectId + "&r=" + result.runId;
+    // Ensure accessURL does not end with a slash, and paths start with a slash if not empty
+    String normalizedAccessURL = accessURL.endsWith("/") ? accessURL.substring(0, accessURL.length() - 1) : accessURL;
+    return normalizedAccessURL + "/metrics/index.html?a=review&p=" + result.projectId + "&r=" + result.runId;
   }
 }
