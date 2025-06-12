@@ -15,6 +15,7 @@
     <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <findbugs.failOnError>true</findbugs.failOnError>
+    <!-- <powermock.version>2.0.9</powermock.version> --> <!-- Removed PowerMock version -->
   </properties>
 
   <artifactId>mathworks-polyspace</artifactId>
@@ -111,6 +112,31 @@
       <!-- version is managed by bom-2.479.x -->
       <scope>test</scope>
     </dependency>
+
+    <!-- JUnit 4 is still needed for @Test, @Before annotations used in PolyspaceBinConfigTest -->
+    <!-- If we migrate tests to JUnit 5 fully, this could be removed too. -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- PowerMock dependencies are removed -->
+    <!--
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    -->
   </dependencies>
 
   <build>
