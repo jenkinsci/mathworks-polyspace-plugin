@@ -34,11 +34,11 @@ public class PolyspaceHelpersTest {
     private final PrintStream originalErr = System.err;
 
     private static final String USAGE_REPORT_FILTER = "Usage: ps_helper -report-filter <original_report> <filtered_report> [<owner>] [<title> <value>]+" + System.lineSeparator();
-    private static final String USAGE_REPORT_STATUS = "Usage: ps_helper -report-status <report_file> <max_findings_threshold>" + System.lineSeparator();
-    private static final String USAGE_REPORT_COUNT_FINDINGS = "Usage: ps_helper -report-count-findings <report_file>" + System.lineSeparator();
-    private static final String USAGE_PRINT_RUNID = "Usage: ps_helper -print-runid <polyspace_upload_output_file>" + System.lineSeparator();
-    private static final String USAGE_PRINT_PROJECTID = "Usage: ps_helper -print-projectid <polyspace_upload_output_file>" + System.lineSeparator();
-    private static final String USAGE_PRINT_PROJECTURL = "Usage: ps_helper -print-projecturl <polyspace_upload_output_file> <polyspace_server_url>" + System.lineSeparator();
+    private static final String USAGE_REPORT_STATUS = "Usage: ps_helper -report-status <report> <nb_to_fail>" + System.lineSeparator();
+    private static final String USAGE_REPORT_COUNT_FINDINGS = "Usage: ps_helper -report-count-findings <report>" + System.lineSeparator();
+    private static final String USAGE_PRINT_RUNID = "Usage: ps_helper -print-runid <access upload output>" + System.lineSeparator();
+    private static final String USAGE_PRINT_PROJECTID = "Usage: ps_helper -print-projectid <access upload output>" + System.lineSeparator();
+    private static final String USAGE_PRINT_PROJECTURL = "Usage: ps_helper -print-projecturl <access upload output> <access_url>" + System.lineSeparator();
 
     @BeforeEach
     public void setUp() {
