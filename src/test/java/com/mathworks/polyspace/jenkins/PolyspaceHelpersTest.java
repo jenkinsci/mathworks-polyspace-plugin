@@ -166,29 +166,6 @@ public class PolyspaceHelpersTest {
     }
 
     @Test
-    void testUsageOutputForNoArgsOrInvalidArg() throws IOException {
-        // This test simulates the behavior of PolyspaceHelpers.main() when no args or an invalid arg is given,
-        // which results in all usage messages being printed.
-        String[] emptyArgs = {}; // Represents the arguments that would lead to a helper printing its usage
-
-        // Call each helper method that would print its usage
-        polyspaceHelpersInstance.reportFilter(emptyArgs);
-        polyspaceHelpersInstance.reportStatus(emptyArgs);
-        polyspaceHelpersInstance.reportCountFindings(emptyArgs);
-        polyspaceHelpersInstance.printRunId(emptyArgs);
-        polyspaceHelpersInstance.printProjectId(emptyArgs);
-        polyspaceHelpersInstance.printProjectUrl(emptyArgs);
-
-        String expectedOutput = USAGE_REPORT_FILTER +
-                                USAGE_REPORT_STATUS +
-                                USAGE_REPORT_COUNT_FINDINGS +
-                                USAGE_PRINT_RUNID +
-                                USAGE_PRINT_PROJECTID +
-                                USAGE_PRINT_PROJECTURL;
-        assertEquals(expectedOutput, outContent.toString());
-    }
-
-    @Test
     void testReportFilterMissingArgs() throws IOException {
         String[] args = {"-report-filter", "original.txt"};
         polyspaceHelpersInstance.reportFilter(args);
@@ -228,5 +205,33 @@ public class PolyspaceHelpersTest {
         String[] args = {"-print-projecturl", "output.txt"};
         polyspaceHelpersInstance.printProjectUrl(args);
         assertEquals(USAGE_PRINT_PROJECTURL, outContent.toString());
+    }
+
+    @Test
+    void testMainCalledWithNoArguments() throws IOException {
+        String[] args = {};
+        PolyspaceHelpers.main(args); // Directly call the static main method
+
+        String expectedOutput = USAGE_REPORT_FILTER +
+                                USAGE_REPORT_STATUS +
+                                USAGE_REPORT_COUNT_FINDINGS +
+                                USAGE_PRINT_RUNID +
+                                USAGE_PRINT_PROJECTID +
+                                USAGE_PRINT_PROJECTURL;
+        assertEquals(expectedOutput, outContent.toString());
+    }
+
+    @Test
+    void testMainCalledWithInvalidArguments() throws IOException {
+        String[] args = {"-some-invalid-command"};
+        PolyspaceHelpers.main(args); // Directly call the static main method
+
+        String expectedOutput = USAGE_REPORT_FILTER +
+                                USAGE_REPORT_STATUS +
+                                USAGE_REPORT_COUNT_FINDINGS +
+                                USAGE_PRINT_RUNID +
+                                USAGE_PRINT_PROJECTID +
+                                USAGE_PRINT_PROJECTURL;
+        assertEquals(expectedOutput, outContent.toString());
     }
 }
