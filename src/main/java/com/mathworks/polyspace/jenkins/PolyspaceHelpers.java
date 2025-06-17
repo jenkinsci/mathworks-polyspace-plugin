@@ -30,7 +30,13 @@ import com.mathworks.polyspace.jenkins.utils.PolyspaceHelpersUtils;
 
 public class PolyspaceHelpers {
 
-  private static void reportFilter(final String[] arg) throws IOException, RuntimeException {
+  private final PolyspaceHelpersUtils utils;
+
+  public PolyspaceHelpers(PolyspaceHelpersUtils utils) {
+    this.utils = utils;
+  }
+
+  private void reportFilter(final String[] arg) throws IOException, RuntimeException {
     if (arg.length < 5) {
       System.out.println("Usage: ps_helper -report-filter <original_report> <filtered_report> [<owner>] [<title> <value>]+");
       return;
@@ -51,77 +57,80 @@ public class PolyspaceHelpers {
 
     final String[] filters = Arrays.copyOfRange(arg, n, arg.length);
 
-    new PolyspaceHelpersUtils().reportFilter(originalReport, filteredReport, owner, filters);
+    this.utils.reportFilter(originalReport, filteredReport, owner, filters);
   }
 
-  private static void printRunId(final String[] arg) throws IOException, RuntimeException {
+  private void printRunId(final String[] arg) throws IOException, RuntimeException {
     if (arg.length != 2) {
       System.out.println("Usage: ps_helper -print-runid <access upload output>");
       return;
     }
-    System.out.println(new PolyspaceHelpersUtils().getAccessResultRunId(Paths.get(arg[1])));
+    System.out.println(this.utils.getAccessResultRunId(Paths.get(arg[1])));
   }
 
-  private static void printProjectId(final String[] arg) throws IOException, RuntimeException {
+  private void printProjectId(final String[] arg) throws IOException, RuntimeException {
     if (arg.length != 2) {
       System.out.println("Usage: ps_helper -print-projectid <access upload output>");
       return;
     }
-    System.out.println(new PolyspaceHelpersUtils().getAccessResultProjectId(Paths.get(arg[1])));
+    System.out.println(this.utils.getAccessResultProjectId(Paths.get(arg[1])));
   }
 
-  private static void printProjectUrl(final String[] arg) throws IOException, RuntimeException {
+  private void printProjectUrl(final String[] arg) throws IOException, RuntimeException {
     if (arg.length != 3) {
       System.out.println("Usage: ps_helper -print-projecturl <access upload output> <access_url>");
       return;
     }
-    System.out.println(new PolyspaceHelpersUtils().getAccessResultUrl(Paths.get(arg[1]), arg[2]));
+    System.out.println(this.utils.getAccessResultUrl(Paths.get(arg[1]), arg[2]));
   }
 
-  private static void reportStatus(final String[] arg) throws IOException, NumberFormatException {
+  private void reportStatus(final String[] arg) throws IOException, NumberFormatException {
     if (arg.length != 3) {
       System.out.println("Usage: ps_helper -report-status <report> <nb_to_fail>");
       return;
     }
-    System.out.println(new PolyspaceHelpersUtils().getReportStatus(Paths.get(arg[1]), Long.parseLong(arg[2])));
+    System.out.println(this.utils.getReportStatus(Paths.get(arg[1]), Long.parseLong(arg[2])));
   }
 
-  private static void reportCountFindings(final String[] arg) throws IOException, NumberFormatException {
+  private void reportCountFindings(final String[] arg) throws IOException, NumberFormatException {
     if (arg.length != 2) {
       System.out.println("Usage: ps_helper -report-count-findings <report>");
       return;
     }
-    System.out.println(new PolyspaceHelpersUtils().getCountFindings(Paths.get(arg[1])));
+    System.out.println(this.utils.getCountFindings(Paths.get(arg[1])));
   }
 
-  public static void main (String[] arg) throws IOException, RuntimeException, NumberFormatException{
+  public static void main (String[] arg) throws IOException, RuntimeException, NumberFormatException {
+    PolyspaceHelpersUtils helpersUtils = new PolyspaceHelpersUtils();
+    PolyspaceHelpers instance = new PolyspaceHelpers(helpersUtils);
+
     boolean usage = false;
     if (arg.length == 0) {
-      usage = true;
+        usage = true;
     } else if (arg[0].equals("-report-filter") || arg[0].equals("report_filter")) {
-      reportFilter(arg);
+        instance.reportFilter(arg);
     } else if (arg[0].equals("-report-status") || arg[0].equals("report_status")) {
-      reportStatus(arg);
+        instance.reportStatus(arg);
     } else if (arg[0].equals("-report-count-findings") || arg[0].equals("report_count_findings")) {
-      reportCountFindings(arg);
+        instance.reportCountFindings(arg);
     } else if (arg[0].equals("-print-runid") || arg[0].equals("print_runid")) {
-      printRunId(arg);
+        instance.printRunId(arg);
     } else if (arg[0].equals("-print-projectid") || arg[0].equals("print_projectid")) {
-      printProjectId(arg);
+        instance.printProjectId(arg);
     } else if (arg[0].equals("-print-projecturl") || arg[0].equals("print_projecturl")) {
-      printProjectUrl(arg);
+        instance.printProjectUrl(arg);
     } else {
-      usage = true;
+        usage = true;
     }
 
     if (usage) {
-      String[] empty = {} ;
-      reportFilter(empty);
-      reportStatus(empty);
-      reportCountFindings(empty);
-      printRunId(empty);
-      printProjectId(empty);
-      printProjectUrl(empty);
+        String[] empty = {} ;
+        instance.reportFilter(empty);
+        instance.reportStatus(empty);
+        instance.reportCountFindings(empty);
+        instance.printRunId(empty);
+        instance.printProjectId(empty);
+        instance.printProjectUrl(empty);
     }
   }
 }
