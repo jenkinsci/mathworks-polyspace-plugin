@@ -51,7 +51,7 @@ public class PolyspaceHelpers {
 
     final String[] filters = Arrays.copyOfRange(arg, n, arg.length);
 
-    PolyspaceHelpersUtils.reportFilter(originalReport, filteredReport, owner, filters);
+    new PolyspaceHelpersUtils().reportFilter(originalReport, filteredReport, owner, filters);
   }
 
   private static void printRunId(final String[] arg) throws IOException, RuntimeException {
@@ -59,7 +59,7 @@ public class PolyspaceHelpers {
       System.out.println("Usage: ps_helper -print-runid <access upload output>");
       return;
     }
-    System.out.println(PolyspaceHelpersUtils.getAccessResultRunId(Paths.get(arg[1])));
+    System.out.println(new PolyspaceHelpersUtils().getAccessResultRunId(Paths.get(arg[1])));
   }
 
   private static void printProjectId(final String[] arg) throws IOException, RuntimeException {
@@ -67,7 +67,7 @@ public class PolyspaceHelpers {
       System.out.println("Usage: ps_helper -print-projectid <access upload output>");
       return;
     }
-    System.out.println(PolyspaceHelpersUtils.getAccessResultProjectId(Paths.get(arg[1])));
+    System.out.println(new PolyspaceHelpersUtils().getAccessResultProjectId(Paths.get(arg[1])));
   }
 
   private static void printProjectUrl(final String[] arg) throws IOException, RuntimeException {
@@ -75,7 +75,7 @@ public class PolyspaceHelpers {
       System.out.println("Usage: ps_helper -print-projecturl <access upload output> <access_url>");
       return;
     }
-    System.out.println(PolyspaceHelpersUtils.getAccessResultUrl(Paths.get(arg[1]), arg[2]));
+    System.out.println(new PolyspaceHelpersUtils().getAccessResultUrl(Paths.get(arg[1]), arg[2]));
   }
 
   private static void reportStatus(final String[] arg) throws IOException, NumberFormatException {
@@ -83,7 +83,7 @@ public class PolyspaceHelpers {
       System.out.println("Usage: ps_helper -report-status <report> <nb_to_fail>");
       return;
     }
-    System.out.println(PolyspaceHelpersUtils.getReportStatus(Paths.get(arg[1]), Long.parseLong(arg[2])));
+    System.out.println(new PolyspaceHelpersUtils().getReportStatus(Paths.get(arg[1]), Long.parseLong(arg[2])));
   }
 
   private static void reportCountFindings(final String[] arg) throws IOException, NumberFormatException {
@@ -91,7 +91,7 @@ public class PolyspaceHelpers {
       System.out.println("Usage: ps_helper -report-count-findings <report>");
       return;
     }
-    System.out.println(PolyspaceHelpersUtils.getCountFindings(Paths.get(arg[1])));
+    System.out.println(new PolyspaceHelpersUtils().getCountFindings(Paths.get(arg[1])));
   }
 
   public static void main (String[] arg) throws IOException, RuntimeException, NumberFormatException{

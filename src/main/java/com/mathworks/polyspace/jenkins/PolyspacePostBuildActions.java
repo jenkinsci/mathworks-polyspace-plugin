@@ -54,6 +54,7 @@ import jakarta.activation.*;
  * {@link Publisher} that sends Polyspace Notification in e-mail.
  */
 public class PolyspacePostBuildActions extends Notifier implements SimpleBuildStep {
+    private final PolyspaceHelpersUtils polyspaceHelpersUtils = new PolyspaceHelpersUtils();
     private Boolean sendToRecipients;    /** True if we want to send an email to a list of recipients */
     private String recipients;           /** Whitespace-separated list of e-mail addresses that represent recipients */
     private String fileToAttach;         /** File to attach */
@@ -195,7 +196,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
       if (owner.isEmpty()) {
         fileName += name;
       } else {
-        fileName += name + PolyspaceHelpersUtils.getReportOwner(Paths.get(name), owner);
+        fileName += name + polyspaceHelpersUtils.getReportOwner(Paths.get(name), owner);
       }
       // InputStream inputStream = new FileInputStream(fileName);
       // return IOUtils.toString(inputStream);
@@ -223,7 +224,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         text += "Please check attached file " + attachName + CRLF;
         try {
           text += "It contains ";
-          text += PolyspaceHelpersUtils.getCountFindings(Paths.get(attachSource));
+          text += polyspaceHelpersUtils.getCountFindings(Paths.get(attachSource));
           text += " finding(s)" + CRLF;
         } catch (Exception e) {
           text += "Cannot count nb of findings" + CRLF;
@@ -307,7 +308,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
     private void sendToOwners(final Run<?,?> build, final FilePath workspace) throws IOException, InterruptedException
     {
-      String ownerList = getFileFromAgent(workspace, PolyspaceHelpersUtils.getReportOwnerList(Paths.get(queryBaseName)).toString());
+      String ownerList = getFileFromAgent(workspace, polyspaceHelpersUtils.getReportOwnerList(Paths.get(queryBaseName)).toString());
 
       if (!ownerList.isEmpty())
       {
@@ -320,7 +321,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
             final String owner = ownerListScanner.nextLine();
             final String recipient = uniqueRecipients.isEmpty() ? owner : uniqueRecipients;
 
-            final String attachSource = getFileFromAgent(workspace, PolyspaceHelpersUtils.getReportOwner(Paths.get(queryBaseName), owner).toString());
+            final String attachSource = getFileFromAgent(workspace, polyspaceHelpersUtils.getReportOwner(Paths.get(queryBaseName), owner).toString());
             final String attachName = new File(attachSource).getName();
 
             final String subject = generateMailSubject(mailSubjectBaseName, owner, workspace, build);
