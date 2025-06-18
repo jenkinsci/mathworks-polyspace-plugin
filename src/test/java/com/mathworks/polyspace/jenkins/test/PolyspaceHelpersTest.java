@@ -1,5 +1,6 @@
-package com.mathworks.polyspace.jenkins;
+package com.mathworks.polyspace.jenkins.test;
 
+import com.mathworks.polyspace.jenkins.PolyspaceHelpers;
 import com.mathworks.polyspace.jenkins.utils.PolyspaceHelpersUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

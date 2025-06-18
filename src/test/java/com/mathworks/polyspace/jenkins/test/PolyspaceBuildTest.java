@@ -24,6 +24,9 @@ package com.mathworks.polyspace.jenkins.test;
 import com.mathworks.polyspace.jenkins.PolyspaceBuildWrapper;
 import com.mathworks.polyspace.jenkins.PolyspacePostBuildActions;
 import com.mathworks.polyspace.jenkins.config.*;
+import com.mathworks.polyspace.jenkins.config.Messages;
+import com.mathworks.polyspace.jenkins.utils.PolyspaceConfigUtils;
+
 import hudson.Functions;
 import hudson.model.*;
 import hudson.tasks.*;
@@ -247,7 +250,7 @@ class PolyspaceBuildTest {
 
     FormValidation port_access_ko = desc_access.doCheckPolyspaceAccessPort("wrong-port");
     assertEquals(FormValidation.Kind.ERROR, port_access_ko.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.portMustBeANumber(), port_access_ko.renderHtml());
+    assertEquals(Messages.portMustBeANumber(), port_access_ko.renderHtml());
 
     FormValidation protocol_access_http  = desc_access.doCheckPolyspaceAccessProtocol("http");
     assertEquals(FormValidation.Kind.OK, protocol_access_http.kind);
@@ -257,7 +260,7 @@ class PolyspaceBuildTest {
 
     FormValidation protocol_access_ko    = desc_access.doCheckPolyspaceAccessProtocol("wrong_protocol");
     assertEquals(FormValidation.Kind.ERROR, protocol_access_ko.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.wrongProtocol(), protocol_access_ko.renderHtml());
+    assertEquals(Messages.wrongProtocol(), protocol_access_ko.renderHtml());
   }
 
   // Check test functions that check parameters
@@ -267,15 +270,15 @@ class PolyspaceBuildTest {
 
     FormValidation path_bin_not_found = desc_bin.doCheckPolyspacePath(BIN_NOT_FOUND.toString()); // Folder was not created
     assertEquals(FormValidation.Kind.WARNING, path_bin_not_found.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotFound(), path_bin_not_found.renderHtml());
+    assertEquals(Messages.polyspaceBinNotFound(), path_bin_not_found.renderHtml());
 
     FormValidation path_bin_not_valid = desc_bin.doCheckPolyspacePath(BIN_NOT_VALID.toString()); // Folder exists it but it does not contain a polyspace binary
     assertEquals(FormValidation.Kind.WARNING, path_bin_not_valid.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotValid(), path_bin_not_valid.renderHtml());
+    assertEquals(Messages.polyspaceBinNotValid(), path_bin_not_valid.renderHtml());
 
     FormValidation path_bin_wrong_config = desc_bin.doCheckPolyspacePath(FAKE_BIN_FOLDER.toString()); // Folder exists but contains a wrong polyspace binary
     assertEquals(FormValidation.Kind.ERROR, path_bin_wrong_config.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinWrongConfig() + " &#039;" + FAKE_POLYSPACE + " -h&#039;", path_bin_wrong_config.renderHtml());
+    assertEquals(Messages.polyspaceBinWrongConfig() + " &#039;" + FAKE_POLYSPACE + " -h&#039;", path_bin_wrong_config.renderHtml());
   }
 
   // Check test functions for Post Build Actions
@@ -285,15 +288,15 @@ class PolyspaceBuildTest {
 
     FormValidation absoluteDirectoryForbidden = desc_pba.doCheckFileToAttach("/etc/passwd");
     assertEquals(FormValidation.Kind.ERROR, absoluteDirectoryForbidden.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.absoluteDirectoryForbidden(), absoluteDirectoryForbidden.renderHtml());
+    assertEquals(Messages.absoluteDirectoryForbidden(), absoluteDirectoryForbidden.renderHtml());
 
     FormValidation previousDirectoryForbidden1 = desc_pba.doCheckFileToAttach("sub1/sub2/../../../../../etc/passwd");
     assertEquals(FormValidation.Kind.ERROR, previousDirectoryForbidden1.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.previousDirectoryForbidden(), previousDirectoryForbidden1.renderHtml());
+    assertEquals(Messages.previousDirectoryForbidden(), previousDirectoryForbidden1.renderHtml());
 
     FormValidation previousDirectoryForbidden2 = desc_pba.doCheckFileToAttach("../../etc/passwd");
     assertEquals(FormValidation.Kind.ERROR, previousDirectoryForbidden2.kind);
-    assertEquals(com.mathworks.polyspace.jenkins.config.Messages.previousDirectoryForbidden(), previousDirectoryForbidden2.renderHtml());
+    assertEquals(Messages.previousDirectoryForbidden(), previousDirectoryForbidden2.renderHtml());
 
     FormValidation okFormValidation = desc_pba.doCheckFileToAttach("polyspace/report.txt");
     assertEquals(FormValidation.Kind.OK, okFormValidation.kind);

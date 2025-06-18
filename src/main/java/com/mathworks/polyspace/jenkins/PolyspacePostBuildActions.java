@@ -24,7 +24,7 @@ package com.mathworks.polyspace.jenkins;
 import org.kohsuke.stapler.*;
 
 import com.mathworks.polyspace.jenkins.config.Messages;
-import com.mathworks.polyspace.jenkins.config.PolyspaceConfigUtils;
+import com.mathworks.polyspace.jenkins.utils.PolyspaceConfigUtils;
 import com.mathworks.polyspace.jenkins.utils.PolyspaceHelpersUtils;
 import com.mathworks.polyspace.jenkins.utils.PolyspaceUtils;
 
