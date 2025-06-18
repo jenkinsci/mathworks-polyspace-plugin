@@ -173,8 +173,22 @@ public class PolyspaceHelpersTest {
     }
 
     @Test
+    void testReportFilterUnderscoreMissingArgs() throws IOException {
+        String[] args = {"report_filter", "original.txt"};
+        PolyspaceHelpers.main(args);
+        assertEquals(USAGE_REPORT_FILTER, outContent.toString());
+    }
+
+    @Test
     void testReportStatusMissingArgs() throws IOException {
         String[] args = {"-report-status", "report.txt"};
+        PolyspaceHelpers.main(args);
+        assertEquals(USAGE_REPORT_STATUS, outContent.toString());
+    }
+
+    @Test
+    void testReportStatusUnderscoreMissingArgs() throws IOException {
+        String[] args = {"report_status", "report.txt"};
         PolyspaceHelpers.main(args);
         assertEquals(USAGE_REPORT_STATUS, outContent.toString());
     }
@@ -187,8 +201,22 @@ public class PolyspaceHelpersTest {
     }
 
     @Test
+    void testReportCountFindingsUnderscoreMissingArgs() throws IOException {
+        String[] args = {"report_count_findings"};
+        PolyspaceHelpers.main(args);
+        assertEquals(USAGE_REPORT_COUNT_FINDINGS, outContent.toString());
+    }
+
+    @Test
     void testPrintRunIdMissingArgs() throws IOException {
         String[] args = {"-print-runid"};
+        PolyspaceHelpers.main(args);
+        assertEquals(USAGE_PRINT_RUNID, outContent.toString());
+    }
+
+    @Test
+    void testPrintRunIdUnderscoreMissingArgs() throws IOException {
+        String[] args = {"print_runid"};
         PolyspaceHelpers.main(args);
         assertEquals(USAGE_PRINT_RUNID, outContent.toString());
     }
@@ -201,8 +229,22 @@ public class PolyspaceHelpersTest {
     }
 
     @Test
+    void testPrintProjectIdUnderscoreMissingArgs() throws IOException {
+        String[] args = {"print_projectid"};
+        PolyspaceHelpers.main(args);
+        assertEquals(USAGE_PRINT_PROJECTID, outContent.toString());
+    }
+
+    @Test
     void testPrintProjectUrlMissingArgs() throws IOException {
         String[] args = {"-print-projecturl", "output.txt"};
+        PolyspaceHelpers.main(args);
+        assertEquals(USAGE_PRINT_PROJECTURL, outContent.toString());
+    }
+
+    @Test
+    void testPrintProjectUrlUnderscoreMissingArgs() throws IOException {
+        String[] args = {"print_projecturl", "output.txt"};
         PolyspaceHelpers.main(args);
         assertEquals(USAGE_PRINT_PROJECTURL, outContent.toString());
     }
