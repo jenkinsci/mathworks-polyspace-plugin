@@ -35,13 +35,15 @@ import java.util.Scanner;
 
 public class PolyspaceHelpersUtils {
 
+  public PolyspaceHelpersUtils() {}
+
   /**
    * @param ownerList - The owner list file
    * @param owner - An owner
    * @return {@code true} if {@code owner} is in {@code ownerList} - {@code false} otherwise
    * @throws IOException Error while accessing {@code ownerList}
    */
-  public static Boolean isOwnerInFile(final Path ownerList, final String owner) throws IOException
+  public Boolean isOwnerInFile(final Path ownerList, final String owner) throws IOException
   {
     if (!ownerList.toFile().exists()) {
       // The owner list file does not exist. So the owner is not in the list!
@@ -58,7 +60,7 @@ public class PolyspaceHelpersUtils {
    * @param line - Line string to add
    * @throws IOException Error while accessing {@code file}
    */
-  public static void appendLineInFile(final Path file, final String line) throws IOException
+  public void appendLineInFile(final Path file, final String line) throws IOException
   {
     final String lineWithNewLine = line + System.lineSeparator();
     Files.write(file, lineWithNewLine.getBytes(StandardCharsets.UTF_8),
@@ -77,7 +79,7 @@ public class PolyspaceHelpersUtils {
    * @param owner - An owner
    * @return The report-owner filename
    */
-  public static Path getReportOwner(final Path report, final String owner)
+  public Path getReportOwner(final Path report, final String owner)
   {
     if (owner.isEmpty()) return report;
 
@@ -95,7 +97,7 @@ public class PolyspaceHelpersUtils {
    * @param report - Path to the report
    * @return The report-owner-list filename
    */
-  public static Path getReportOwnerList(final Path report)
+  public Path getReportOwnerList(final Path report)
   {
     return Paths.get(report + ".owners.list");
   }
@@ -107,7 +109,7 @@ public class PolyspaceHelpersUtils {
    * @param token - Searched token
    * @return The column ID
    */
-  public static int reportGetColId(final String line, final String token)
+  public int reportGetColId(final String line, final String token)
   {
     final List<String> tokens = Arrays.asList(line.split("\t"));
     final int index = tokens.indexOf(token);
@@ -125,7 +127,7 @@ public class PolyspaceHelpersUtils {
    * @param filters - An array of strings containing one or more "key" "value" pairs
    * @throws IOException Error while accessing {@code originalReport} or {@code filteredReport}
    */
-  public static void reportFilter(final Path originalReport, final Path filteredReport, final String owner, final String[] filters) throws IOException {
+  public void reportFilter(final Path originalReport, final Path filteredReport, final String owner, final String[] filters) throws IOException {
     int n = 0;
 
     // Check original report
@@ -141,13 +143,13 @@ public class PolyspaceHelpersUtils {
     }
 
     // Check filtered report
-    Path filteredReport_owner = PolyspaceHelpersUtils.getReportOwner(filteredReport, owner);
+    Path filteredReport_owner = getReportOwner(filteredReport, owner);
     if (!owner.isEmpty() && filteredReport_owner.toFile().isDirectory()) {
       throw new RuntimeException("Cannot create filtered report, a directory with the same name already exists: '" + filteredReport_owner + "'");
     }
 
     // Check owners list
-    final Path ownerList = PolyspaceHelpersUtils.getReportOwnerList(filteredReport);   // name of the file that contains all owners that have been filtered
+    final Path ownerList = getReportOwnerList(filteredReport);   // name of the file that contains all owners that have been filtered
     if (ownerList.toFile().isDirectory()) {
       throw new RuntimeException("Cannot create owner list, a directory with the same name already exists: '" + ownerList + "'");
     }
@@ -167,7 +169,7 @@ public class PolyspaceHelpersUtils {
       int[] colId = new int[nCriteria];
       String[] criteria = new String[nCriteria];
       for (int id = 0; id < nCriteria; id++) {
-        colId[id] = PolyspaceHelpersUtils.reportGetColId(titleLine, filters[n++]);
+        colId[id] = reportGetColId(titleLine, filters[n++]);
         criteria[id] = filters[n++];
       }
 
@@ -199,8 +201,8 @@ public class PolyspaceHelpersUtils {
 
       if (!filteredReportEmpty && !owner.isEmpty()) {
         // this owner must be added to the list of owners, if this is not already the case
-        if (!PolyspaceHelpersUtils.isOwnerInFile(ownerList, owner)) {
-          PolyspaceHelpersUtils.appendLineInFile(ownerList, owner);
+        if (!isOwnerInFile(ownerList, owner)) {
+          appendLineInFile(ownerList, owner);
         }
       }
     }
@@ -211,7 +213,7 @@ public class PolyspaceHelpersUtils {
    * @return - Number of findings in {@code report}: number of lines - 1 (title line)
    * @throws IOException Error while accessing {@code report}
    */
-  public static long getCountFindings(final Path report) throws IOException {
+  public long getCountFindings(final Path report) throws IOException {
     return PolyspaceUtils.getFileLineCount(report) - 1;
   }
 
@@ -222,9 +224,9 @@ public class PolyspaceHelpersUtils {
    * @return - Job status string: SUCCESS if num findings smaller than {@code max}, UNSTABLE otherwise
    * @throws IOException Error while accessing {@code report}
    */
-  public static String getReportStatus(final Path report, final long max) throws IOException
+  public String getReportStatus(final Path report, final long max) throws IOException
   {
-    final long nb = PolyspaceHelpersUtils.getCountFindings(report);
+    final long nb = getCountFindings(report);
     return nb > max ? "UNSTABLE" : "SUCCESS";
   }
 
@@ -251,7 +253,7 @@ public class PolyspaceHelpersUtils {
    * @return - RunId and ProjectId for result found in {@code output}
    * @throws IOException Error while accessing {@code output}
    */
-  private static AccessUploadResult getAccessUploadResult(Path output) throws IOException
+  private AccessUploadResult getAccessUploadResult(Path output) throws IOException
   {
     AccessUploadResult result = new AccessUploadResult();
     final String content = PolyspaceUtils.getFileContent(output);
@@ -273,7 +275,7 @@ public class PolyspaceHelpersUtils {
    * @return Result runId
    * @throws IOException Error while accessing {@code output}
    */
-  public static String getAccessResultRunId(Path output) throws IOException
+  public String getAccessResultRunId(Path output) throws IOException
   {
     AccessUploadResult result = getAccessUploadResult(output);
     if (result.runId.isEmpty())
@@ -288,7 +290,7 @@ public class PolyspaceHelpersUtils {
    * @return Result projectId
    * @throws IOException Error while accessing {@code output}
    */
-  public static String getAccessResultProjectId(Path output) throws IOException
+  public String getAccessResultProjectId(Path output) throws IOException
   {
     AccessUploadResult result = getAccessUploadResult(output);
     if (result.projectId.isEmpty())
@@ -304,7 +306,7 @@ public class PolyspaceHelpersUtils {
    * @return Results URL
    * @throws IOException Error while accessing {@code output}
    */
-  public static String getAccessResultUrl(Path output, String accessURL) throws IOException
+  public String getAccessResultUrl(Path output, String accessURL) throws IOException
   {
     AccessUploadResult result = getAccessUploadResult(output);
     if (result.projectId.isEmpty())

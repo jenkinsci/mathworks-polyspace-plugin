@@ -22,6 +22,9 @@
 package com.mathworks.polyspace.jenkins;
 
 import com.mathworks.polyspace.jenkins.config.*;
+import com.mathworks.polyspace.jenkins.config.Messages;
+import com.mathworks.polyspace.jenkins.constants.PolyspaceConstants;
+import com.mathworks.polyspace.jenkins.utils.PolyspaceConfigUtils;
 
 import org.kohsuke.stapler.*;
 
@@ -206,7 +209,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
             return true;
         }
 
-        public String getDisplayName() { return com.mathworks.polyspace.jenkins.config.Messages.polyspaceBuildWrapperDisplayName(); }
+        public String getDisplayName() { return Messages.polyspaceBuildWrapperDisplayName(); }
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
@@ -287,7 +290,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
         public FormValidation doCheckPolyspaceAccess(@AncestorInPath Item item, @QueryParameter String serverConfig, @QueryParameter String polyspaceAccessCredentialId, @QueryParameter String binConfig) throws IOException, InterruptedException
         {
           if (item == null) {
-            return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.internalError());
+            return FormValidation.error(Messages.internalError());
           }
           item.checkPermission(Item.CONFIGURE);
 

@@ -19,7 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.jenkins.config;
+package com.mathworks.polyspace.jenkins.utils;
+
+import com.mathworks.polyspace.jenkins.config.Messages;
 
 import hudson.tasks.*;      // The mailer
 import hudson.util.FormValidation;
@@ -42,14 +44,14 @@ public final class PolyspaceConfigUtils {
   public static void checkPolyspaceBinFolderExists(String polyspacePath) throws FormValidation {
     File path = new File(polyspacePath);
     if (!path.isDirectory()) {
-      throw FormValidation.warning(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotFound());
+      throw FormValidation.warning(Messages.polyspaceBinNotFound());
     }
   }
 
   public static void checkPolyspaceBinCommandExists(String polyspaceCommand) throws FormValidation {
     File command = new File(polyspaceCommand);
     if (!command.exists()) {
-      throw FormValidation.warning(com.mathworks.polyspace.jenkins.config.Messages.polyspaceBinNotValid());
+      throw FormValidation.warning(Messages.polyspaceBinNotValid());
     }
   }
 
@@ -88,9 +90,9 @@ public final class PolyspaceConfigUtils {
     Access.add("-list-project");
     String commandString = StringUtils.join(Access, ' ');
     if (checkPolyspaceCommand(Access)) {
-      return FormValidation.ok(com.mathworks.polyspace.jenkins.config.Messages.polyspaceCorrectConfig());
+      return FormValidation.ok(Messages.polyspaceCorrectConfig());
     } else {
-      return FormValidation.error(com.mathworks.polyspace.jenkins.config.Messages.polyspaceAccessWrongConfig() + " '" + commandString + "'");
+      return FormValidation.error(Messages.polyspaceAccessWrongConfig() + " '" + commandString + "'");
     }
   }
 

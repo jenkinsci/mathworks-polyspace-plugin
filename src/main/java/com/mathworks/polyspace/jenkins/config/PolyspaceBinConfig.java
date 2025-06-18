@@ -23,6 +23,9 @@ package com.mathworks.polyspace.jenkins.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.*;
+
+import com.mathworks.polyspace.jenkins.utils.PolyspaceConfigUtils;
+
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;

@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package com.mathworks.polyspace.jenkins;
+package com.mathworks.polyspace.jenkins.constants;
 
 public class PolyspaceConstants {
     // Polyspace General variables
