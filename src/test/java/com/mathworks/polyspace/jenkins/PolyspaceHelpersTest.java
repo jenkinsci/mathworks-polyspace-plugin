@@ -168,42 +168,42 @@ public class PolyspaceHelpersTest {
     @Test
     void testReportFilterMissingArgs() throws IOException {
         String[] args = {"-report-filter", "original.txt"};
-        polyspaceHelpersInstance.reportFilter(args);
+        PolyspaceHelpers.main(args);
         assertEquals(USAGE_REPORT_FILTER, outContent.toString());
     }
 
     @Test
     void testReportStatusMissingArgs() throws IOException {
         String[] args = {"-report-status", "report.txt"};
-        polyspaceHelpersInstance.reportStatus(args);
+        PolyspaceHelpers.main(args);
         assertEquals(USAGE_REPORT_STATUS, outContent.toString());
     }
 
     @Test
     void testReportCountFindingsMissingArgs() throws IOException {
         String[] args = {"-report-count-findings"};
-        polyspaceHelpersInstance.reportCountFindings(args);
+        PolyspaceHelpers.main(args);
         assertEquals(USAGE_REPORT_COUNT_FINDINGS, outContent.toString());
     }
 
     @Test
     void testPrintRunIdMissingArgs() throws IOException {
         String[] args = {"-print-runid"};
-        polyspaceHelpersInstance.printRunId(args);
+        PolyspaceHelpers.main(args);
         assertEquals(USAGE_PRINT_RUNID, outContent.toString());
     }
 
     @Test
     void testPrintProjectIdMissingArgs() throws IOException {
         String[] args = {"-print-projectid"};
-        polyspaceHelpersInstance.printProjectId(args);
+        PolyspaceHelpers.main(args);
         assertEquals(USAGE_PRINT_PROJECTID, outContent.toString());
     }
 
     @Test
     void testPrintProjectUrlMissingArgs() throws IOException {
         String[] args = {"-print-projecturl", "output.txt"};
-        polyspaceHelpersInstance.printProjectUrl(args);
+        PolyspaceHelpers.main(args);
         assertEquals(USAGE_PRINT_PROJECTURL, outContent.toString());
     }
 
