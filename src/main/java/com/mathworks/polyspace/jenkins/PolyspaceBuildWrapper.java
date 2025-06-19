@@ -195,6 +195,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
 
         private CopyOnWriteList<PolyspaceAccessConfig> polyspaceAccessConfigs = new CopyOnWriteList<>();
         private CopyOnWriteList<PolyspaceBinConfig> polyspaceBinConfigs = new CopyOnWriteList<>();
+        private final PolyspaceConfigUtils polyspaceConfigUtils = new PolyspaceConfigUtils();
 
         String polyspaceAccessURL;
 
@@ -311,7 +312,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
           String host = server.getPolyspaceAccessHost();
           String port = server.getPolyspaceAccessPort();
 
-          return PolyspaceConfigUtils.checkPolyspaceAccess(bin.getPolyspacePath(), user, password, protocol, host, port);
+          return polyspaceConfigUtils.checkPolyspaceAccess(bin.getPolyspacePath(), user, password, protocol, host, port);
         }
     }
 }

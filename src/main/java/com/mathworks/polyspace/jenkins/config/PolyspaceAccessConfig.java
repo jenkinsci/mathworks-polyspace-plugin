@@ -78,16 +78,17 @@ public class PolyspaceAccessConfig extends AbstractDescribableImpl<PolyspaceAcce
 
     @Extension
     public static class DescriptorImpl extends Descriptor<PolyspaceAccessConfig> {
+        private final PolyspaceConfigUtils polyspaceConfigUtils = new PolyspaceConfigUtils();
         public String getDisplayName() { return Messages.polyspaceAccessConfigDisplayName(); }
         
         public FormValidation doCheckPolyspaceAccessProtocol(@QueryParameter String value)
             throws IOException, ServletException {
-              return PolyspaceConfigUtils.doCheckProtocol(value);
+              return polyspaceConfigUtils.doCheckProtocol(value);
         }
 
         public FormValidation doCheckPolyspaceAccessPort(@QueryParameter String value)
             throws IOException, ServletException {
-              return PolyspaceConfigUtils.doCheckPort(value);
+              return polyspaceConfigUtils.doCheckPort(value);
         }
     }
 }
