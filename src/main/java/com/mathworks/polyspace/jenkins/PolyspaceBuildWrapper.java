@@ -21,28 +21,47 @@
 
 package com.mathworks.polyspace.jenkins;
 
-import com.mathworks.polyspace.jenkins.config.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+
+import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.common.StandardCredentials;
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.mathworks.polyspace.jenkins.config.Messages;
+import com.mathworks.polyspace.jenkins.config.PolyspaceAccessConfig;
+import com.mathworks.polyspace.jenkins.config.PolyspaceBinConfig;
 import com.mathworks.polyspace.jenkins.constants.PolyspaceConstants;
 import com.mathworks.polyspace.jenkins.utils.PolyspaceConfigUtils;
 
-import org.kohsuke.stapler.*;
-
-import java.io.*;
-import java.util.*;
-
-import hudson.*;
-import hudson.util.*;
-import hudson.model.*;
-import hudson.tasks.*;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Functions;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Item;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.security.ACL;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
-import net.sf.json.JSONObject;
-import com.cloudbees.plugins.credentials.*;
-import com.cloudbees.plugins.credentials.common.*;
+import hudson.tasks.BuildWrapperDescriptor;
+import hudson.util.CopyOnWriteList;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
+import net.sf.json.JSONObject;
 
 public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
 
@@ -113,7 +132,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
     private void update_global(Context context, final PolyspaceBinConfig bin, final EnvVars initialEnvironment) {
       String path = initialEnvironment.get("PATH");
       String jenkins_home = initialEnvironment.get("JENKINS_HOME");
-      if (SystemUtils.IS_OS_WINDOWS) {
+      if (Functions.isWindows()) {
         path = jenkins_home + "\\jre\\bin" + File.pathSeparator + path;   // Adding Path to java on windows
       }
       if (bin != null) {
@@ -126,7 +145,7 @@ public class PolyspaceBuildWrapper extends SimpleBuildWrapper {
 
       String polyspaceJar = jenkins_home + File.separator + "plugins" + File.separator + "mathworks-polyspace" + File.separator + "WEB-INF" + File.separator + "lib" + File.separator + "mathworks-polyspace.jar";
       // the path to the jar may have some space
-      if (SystemUtils.IS_OS_WINDOWS) {
+      if (Functions.isWindows()) {
         polyspaceJar = "\"" + polyspaceJar + "\"";
       } else {
         polyspaceJar = polyspaceJar.replace(" ", "\\ ");
