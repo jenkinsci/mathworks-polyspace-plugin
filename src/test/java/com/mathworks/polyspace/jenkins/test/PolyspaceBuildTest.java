@@ -51,6 +51,7 @@ import java.nio.file.Paths;
 class PolyspaceBuildTest {
 
   private JenkinsRule rule;
+  private final PolyspaceConfigUtils polyspaceConfigUtils = new PolyspaceConfigUtils();
 
   /* the wrapper to be used by all tests */
   private PolyspaceBuildWrapper wrapper;
@@ -106,7 +107,7 @@ class PolyspaceBuildTest {
     Files.createDirectories(FAKE_BIN_FOLDER);
 
     // FAKE_POLYSPACE will not be able to respond to "-h"
-    FAKE_POLYSPACE = FAKE_BIN_FOLDER.resolve("polyspace-bug-finder" + PolyspaceConfigUtils.exeSuffix());
+    FAKE_POLYSPACE = FAKE_BIN_FOLDER.resolve("polyspace-bug-finder" + polyspaceConfigUtils.exeSuffix());
     Files.createFile(FAKE_POLYSPACE);
   }
 

@@ -21,41 +21,46 @@
 
 package com.mathworks.polyspace.jenkins.utils;
 
-import com.mathworks.polyspace.jenkins.config.Messages;
-
-import hudson.tasks.*;      // The mailer
-import hudson.util.FormValidation;
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 
-public final class PolyspaceConfigUtils {
-  public static final String exeSuffix() {
-    if (SystemUtils.IS_OS_WINDOWS) {
+import com.mathworks.polyspace.jenkins.config.Messages;
+
+import hudson.Functions;
+import hudson.tasks.Mailer;
+import hudson.util.FormValidation;
+
+public class PolyspaceConfigUtils {
+
+  public final String exeSuffix() {
+    if (Functions.isWindows()) {
       return ".exe";
     } else {
       return "";
     }
   }
 
-  public static void checkPolyspaceBinFolderExists(String polyspacePath) throws FormValidation {
+  public void checkPolyspaceBinFolderExists(String polyspacePath) throws FormValidation {
     File path = new File(polyspacePath);
     if (!path.isDirectory()) {
       throw FormValidation.warning(Messages.polyspaceBinNotFound());
     }
   }
 
-  public static void checkPolyspaceBinCommandExists(String polyspaceCommand) throws FormValidation {
+  public void checkPolyspaceBinCommandExists(String polyspaceCommand) throws FormValidation {
     File command = new File(polyspaceCommand);
     if (!command.exists()) {
       throw FormValidation.warning(Messages.polyspaceBinNotValid());
     }
   }
 
-  public static FormValidation checkPolyspaceAccess(String polyspacePath, String user, String password, String protocol, String host, String port) {
+  public FormValidation checkPolyspaceAccess(String polyspacePath, String user, String password, String protocol, String host, String port) {
     String polyspaceCmd = polyspacePath + File.separator + "polyspace-access" + exeSuffix();
     try {
       checkPolyspaceBinFolderExists(polyspacePath);
@@ -96,7 +101,7 @@ public final class PolyspaceConfigUtils {
     }
   }
 
-  public static Boolean checkPolyspaceCommand(List<String> Command) {
+  public Boolean checkPolyspaceCommand(List<String> Command) {
     boolean testOK = false;
 
     try
@@ -155,21 +160,21 @@ public final class PolyspaceConfigUtils {
     return testOK;
   }
 
-  public static FormValidation doCheckProtocol(String value) {
+  public FormValidation doCheckProtocol(String value) {
     if (!(value.equals("http") || value.equals("https"))) {
       return FormValidation.error(Messages.wrongProtocol());
     }
     return FormValidation.ok();
   }
 
-  public static FormValidation doCheckPort(String value) {
+  public FormValidation doCheckPort(String value) {
     if (StringUtils.isNumeric(value)) {
       return FormValidation.ok();
     }
     return FormValidation.error(Messages.portMustBeANumber());
   }
 
-  public static FormValidation doCheckFilename(String value) {
+  public FormValidation doCheckFilename(String value) {
     if (!value.isEmpty()) {
       if (value.charAt(0) == '/' || value.charAt(0) == '\\') {
         // Don't allow / or \: only allow a relative directory

@@ -54,6 +54,7 @@ import jakarta.activation.*;
  * {@link Publisher} that sends Polyspace Notification in e-mail.
  */
 public class PolyspacePostBuildActions extends Notifier implements SimpleBuildStep {
+    private final PolyspaceConfigUtils polyspaceConfigUtils = new PolyspaceConfigUtils();
     private final PolyspaceHelpersUtils polyspaceHelpersUtils = new PolyspaceHelpersUtils();
     private Boolean sendToRecipients;    /** True if we want to send an email to a list of recipients */
     private String recipients;           /** Whitespace-separated list of e-mail addresses that represent recipients */
@@ -280,7 +281,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
     private void sendToRecipients(final Run<?,?> build, final FilePath workspace) throws IOException, InterruptedException
     {
-      FormValidation fileToAttachValidation = PolyspaceConfigUtils.doCheckFilename(fileToAttach);
+      FormValidation fileToAttachValidation = polyspaceConfigUtils.doCheckFilename(fileToAttach);
 
       if (fileToAttachValidation == FormValidation.ok())
       {
@@ -378,6 +379,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
 
     @Extension
       public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+        private final PolyspaceConfigUtils polyspaceConfigUtils = new PolyspaceConfigUtils();
 
         public DescriptorImpl() {
         }
@@ -391,7 +393,7 @@ public class PolyspacePostBuildActions extends Notifier implements SimpleBuildSt
         }
 
         public FormValidation doCheckFileToAttach(@QueryParameter String fileToAttach) {
-            return PolyspaceConfigUtils.doCheckFilename(fileToAttach);
+            return polyspaceConfigUtils.doCheckFilename(fileToAttach);
         }
     }
 }

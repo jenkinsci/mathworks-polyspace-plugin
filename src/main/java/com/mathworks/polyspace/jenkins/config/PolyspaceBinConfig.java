@@ -57,23 +57,24 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
 
     @Extension
     public static class DescriptorImpl extends Descriptor<PolyspaceBinConfig> {
+      private final PolyspaceConfigUtils polyspaceConfigUtils = new PolyspaceConfigUtils();
       public String getDisplayName() { return Messages.polyspaceBinConfigDisplayName(); }
       public FormValidation doCheckPolyspacePath(@QueryParameter String polyspacePath) {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         String command;
         try {
-          PolyspaceConfigUtils.checkPolyspaceBinFolderExists(polyspacePath);
-          command = polyspacePath + File.separator + "polyspace-bug-finder" + PolyspaceConfigUtils.exeSuffix();
+          polyspaceConfigUtils.checkPolyspaceBinFolderExists(polyspacePath);
+          command = polyspacePath + File.separator + "polyspace-bug-finder" + polyspaceConfigUtils.exeSuffix();
           try {
-            PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
+            polyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
           } catch (FormValidation val1) {
             try {
-              command = polyspacePath + File.separator + "polyspace-bug-finder-server" + PolyspaceConfigUtils.exeSuffix();
-              PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
+              command = polyspacePath + File.separator + "polyspace-bug-finder-server" + polyspaceConfigUtils.exeSuffix();
+              polyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
             } catch (FormValidation val2) {
               // Manage pre-19a versions of Polyspace
-              command = polyspacePath + File.separator + "polyspace-bug-finder-nodesktop" + PolyspaceConfigUtils.exeSuffix();
-              PolyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
+              command = polyspacePath + File.separator + "polyspace-bug-finder-nodesktop" + polyspaceConfigUtils.exeSuffix();
+              polyspaceConfigUtils.checkPolyspaceBinCommandExists(command);
             }
           }
         } catch (FormValidation val) {
@@ -83,7 +84,7 @@ public class PolyspaceBinConfig extends AbstractDescribableImpl<PolyspaceBinConf
         polyspace.add(command);
         polyspace.add("-h");
         String commandString = StringUtils.join(polyspace, ' ');
-        if (PolyspaceConfigUtils.checkPolyspaceCommand(polyspace)) {
+        if (polyspaceConfigUtils.checkPolyspaceCommand(polyspace)) {
           return FormValidation.ok(Messages.polyspaceCorrectConfig());
         } else {
           return FormValidation.error(Messages.polyspaceBinWrongConfig() + " '" + commandString + "'");
