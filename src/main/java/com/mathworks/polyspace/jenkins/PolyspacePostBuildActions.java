@@ -41,7 +41,7 @@ import hudson.util.FormValidation;
 import hudson.model.*;
 import jenkins.model.JenkinsLocationConfiguration;
 import jenkins.tasks.SimpleBuildStep;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 // import org.apache.commons.io.IOUtils;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
